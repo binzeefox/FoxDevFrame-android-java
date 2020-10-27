@@ -1,6 +1,9 @@
 package com.binzee.foxdevframe.ui;
 
+import android.content.Context;
 import android.os.Bundle;
+
+import com.binzee.foxdevframe.ui.tools.launcher.Launcher;
 
 import java.util.List;
 
@@ -19,19 +22,14 @@ public interface UiInterface {
      */
     void toast(CharSequence text);
 
-    /**
-     * 请求权限
-     *
-     * @author 狐彻 2020/10/21 9:44
-     */
-    void requestPermission(List<String> permissionList);
+//    /**
+//     * 跳转
+//     *
+//     * @author 狐彻 2020/10/21 9:46
+//     */
+//    Launcher navigate(String clsFullName, Bundle params);
 
-    /**
-     * 跳转
-     *
-     * @author 狐彻 2020/10/21 9:46
-     */
-    void navigate(String clsFullName, Bundle params);
+    Context getContext();
 
     /**
      * 主线程运行

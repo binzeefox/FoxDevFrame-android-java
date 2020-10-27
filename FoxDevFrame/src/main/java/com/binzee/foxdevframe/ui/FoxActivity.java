@@ -2,6 +2,7 @@ package com.binzee.foxdevframe.ui;
 
 import android.app.Activity;
 import android.app.Application;
+import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.PersistableBundle;
@@ -15,9 +16,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.binzee.foxdevframe.ui.tools.PopupHelper;
-import com.binzee.foxdevframe.ui.tools.rx_recycler.RxHost;
-import com.binzee.foxdevframe.ui.tools.rx_recycler.RxRecycler;
-import com.binzee.foxdevframe.ui.tools.rx_recycler.RxRecyclerInterface;
+import com.binzee.foxdevframe.ui.tools.launcher.Launcher;
 import com.binzee.foxdevframe.utils.LogUtil;
 
 import java.util.List;
@@ -28,34 +27,21 @@ import java.util.List;
  * @author 狐彻
  * 2020/10/21 9:09
  */
-public abstract class FoxActivity extends AppCompatActivity implements UiInterface, RxHost {
+public abstract class FoxActivity extends AppCompatActivity implements UiInterface {
     private static final String TAG = "FoxActivity";
-    protected RxRecyclerInterface rxRecycler;
+
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        initContentView();
+        onCreate();
+    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState, @Nullable PersistableBundle persistentState) {
         super.onCreate(savedInstanceState, persistentState);
-        rxRecycler = createRxRecycler();
-
-        View layout = createContentView();
-        if (layout != null) setContentView(layout);
-        else if (getContentViewResource() != -1)
-            setContentView(getContentViewResource());
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        if (rxRecycler == null || rxRecycler.isDisposed())
-            rxRecycler = createRxRecycler();
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (rxRecycler != null && !rxRecycler.isDisposed()) {
-            rxRecycler.dispose();
-        }
+        initContentView();
+        onCreate();
     }
 
     @Override
@@ -64,19 +50,10 @@ public abstract class FoxActivity extends AppCompatActivity implements UiInterfa
     }
 
     @Override
-    public void requestPermission(List<String> permissionList) {
-        //TODO 待完成
+    public Context getContext() {
+        return this;
     }
 
-    @Override
-    public void navigate(String clsFullName, Bundle params) {
-        //TODO 待完成
-    }
-
-    @Override
-    public RxRecyclerInterface getRxRecycler() {
-        return rxRecycler;
-    }
 
     ///////////////////////////////////////////////////////////////////////////
     // 工具方法
@@ -103,6 +80,13 @@ public abstract class FoxActivity extends AppCompatActivity implements UiInterfa
     ///////////////////////////////////////////////////////////////////////////
 
     /**
+     * onCreate(Bundle)和onCreate(Bundle, PersistableBundle) 方法加载ContentView后都会调用的回调
+     *
+     * @author 狐彻 2020/10/25 14:46
+     */
+    protected void onCreate(){}
+
+    /**
      * 创建布局，高优先级
      *
      * @author 狐彻 2020/10/21 11:59
@@ -120,13 +104,20 @@ public abstract class FoxActivity extends AppCompatActivity implements UiInterfa
         return -1;
     }
 
+    ///////////////////////////////////////////////////////////////////////////
+    // 私有方法
+    ///////////////////////////////////////////////////////////////////////////
+
     /**
-     * 创建Rx回收器
+     * 初始化ContentView
      *
-     * @author 狐彻 2020/10/21 11:56
+     * @author 狐彻 2020/10/25 14:40
      */
-    protected RxRecyclerInterface createRxRecycler() {
-        return new RxRecycler();
+    private void initContentView() {
+        View layout = createContentView();
+        if (layout != null) setContentView(layout);
+        else if (getContentViewResource() != -1)
+            setContentView(getContentViewResource());
     }
 
     ///////////////////////////////////////////////////////////////////////////
