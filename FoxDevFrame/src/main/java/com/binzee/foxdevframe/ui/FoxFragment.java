@@ -1,19 +1,15 @@
 package com.binzee.foxdevframe.ui;
 
 import android.content.Context;
-import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.binzee.foxdevframe.FoxCore;
-import com.binzee.foxdevframe.ui.tools.PopupHelper;
-
-import java.util.List;
+import com.binzee.foxdevframe.ui.tools.popup.PopupHelper;
 
 /**
  * 碎片基类

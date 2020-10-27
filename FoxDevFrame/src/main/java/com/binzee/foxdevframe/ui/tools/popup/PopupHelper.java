@@ -1,10 +1,9 @@
-package com.binzee.foxdevframe.ui.tools;
+package com.binzee.foxdevframe.ui.tools.popup;
 
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.text.TextUtils;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
@@ -36,8 +35,22 @@ public class PopupHelper {
         //private constructor
     }
 
+    /**
+     * 静态获取
+     *
+     * @author 狐彻 2020/10/27 9:03
+     */
     public static PopupHelper get() {
         return PopupHelperHolder.instance;
+    }
+
+    /**
+     * 系统弹窗工具
+     *
+     * @author 狐彻 2020/10/27 9:03
+     */
+    public static SystemShortcutPopup systemPopup() {
+        return new SystemShortcutPopup();
     }
 
     /**

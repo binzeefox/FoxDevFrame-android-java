@@ -9,6 +9,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
+import com.binzee.foxdevframe.ui.tools.launcher.SystemShortCutLauncher;
 import com.binzee.foxdevframe.utils.LogUtil;
 import com.binzee.foxdevframe.utils.requests.BaseRequestFragment;
 import com.binzee.foxdevframe.utils.requests.BaseRequester;
@@ -103,8 +104,13 @@ public class PermissionChecker extends BaseRequester implements PermissionChecke
 
     @Override
     public void checkAndRequest(int requestCode, OnCheckResultListener listener) {
-        List<String> failedList = ((InnerFragment) getFragment()).check(permissionList);
+        List<String> failedList = getFragment().check(permissionList);
+        getFragment().request(requestCode, failedList, listener);
+    }
 
+    @Override
+    protected InnerFragment getFragment() {
+        return (InnerFragment) super.getFragment();
     }
 
     ///////////////////////////////////////////////////////////////////////////

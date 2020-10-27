@@ -64,6 +64,15 @@ public class Launcher {
     ///////////////////////////////////////////////////////////////////////////
 
     /**
+     * 系统页面快捷方式
+     *
+     * @author 狐彻 2020/10/27 8:34
+     */
+    public SystemShortCutLauncher systemShortCuts() {
+        return new SystemShortCutLauncher(this);
+    }
+
+    /**
      * 跳转至Activity
      *
      * @author 狐彻 2020/10/22 9:44

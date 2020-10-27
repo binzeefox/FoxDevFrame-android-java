@@ -63,10 +63,10 @@ public class FoxCore {
      */
     public static void init(Context context) {
         if (context instanceof Application)
-            get().application = (Application) context;
+            FoxCoreHolder.instance.application = (Application) context;
         else
-            get().application = (Application) context.getApplicationContext();
-        get().registerActivityCallback();
+            FoxCoreHolder.instance.application = (Application) context.getApplicationContext();
+        FoxCoreHolder.instance.registerActivityCallback();
     }
 
     /**

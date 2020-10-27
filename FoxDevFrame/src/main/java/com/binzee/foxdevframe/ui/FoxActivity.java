@@ -15,11 +15,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.binzee.foxdevframe.ui.tools.PopupHelper;
-import com.binzee.foxdevframe.ui.tools.launcher.Launcher;
+import com.binzee.foxdevframe.ui.tools.popup.PopupHelper;
 import com.binzee.foxdevframe.utils.LogUtil;
-
-import java.util.List;
 
 /**
  * Activity基类
