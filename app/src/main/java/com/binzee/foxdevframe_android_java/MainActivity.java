@@ -3,14 +3,15 @@ package com.binzee.foxdevframe_android_java;
 import android.Manifest;
 import android.os.Build;
 
-import androidx.annotation.RequiresApi;
-
 import com.binzee.foxdevframe.ui.FoxActivity;
 import com.binzee.foxdevframe.ui.tools.launcher.Launcher;
 import com.binzee.foxdevframe.ui.tools.popup.PopupHelper;
+import com.binzee.foxdevframe.utils.LogUtil;
+import com.binzee.foxdevframe.utils.ThreadUtils;
 import com.binzee.foxdevframe.utils.permission.PermissionChecker;
 
 public class MainActivity extends FoxActivity {
+    private static final String TAG = "MainActivity";
 
     @Override
     protected int getContentViewResource() {
@@ -20,6 +21,8 @@ public class MainActivity extends FoxActivity {
     @Override
     protected void onCreate() {
 //        setFullScreen();
+        LogUtil.setGlobalExceptionCapture(e ->
+                LogUtil.e(TAG, "onCreate: ", e));
 
         findViewById(R.id.confirm_button).setOnClickListener(v -> test());
     }
@@ -27,9 +30,11 @@ public class MainActivity extends FoxActivity {
     private void test() {
 //        permissionTest();
 //        systemSettingTest();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            systemSettingPopupTest();
-        }
+//        systemSettingPopupTest();
+        ThreadUtils.get().executeIO(() -> {
+            throw new RuntimeException("这是一个子线程内运行时异常");
+        });
+        throw new RuntimeException("这是一个运行时异常");
     }
 
     private void permissionTest() {
@@ -55,12 +60,13 @@ public class MainActivity extends FoxActivity {
                 .launchWifiSetting();
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.Q)
     private void systemSettingPopupTest() {
-        PopupHelper.systemPopup()
-                .showWifiSetting();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            PopupHelper.systemPopup()
+                    .showWifiSetting();
 //                .showVolumeSetting();
 //                .showNFCSetting();
 //                .showInternetSetting();
+        }
     }
 }

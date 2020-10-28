@@ -1,6 +1,9 @@
 package com.binzee.foxdevframe.utils;
 
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
+import android.util.Printer;
 
 
 /**
@@ -74,5 +77,57 @@ public class LogUtil {
     public static void e(CharSequence tag, CharSequence text, Throwable throwable) {
         if (CURRENT_CLASS >= CLASS_E)
             Log.e(tag.toString(), text.toString(), throwable);
+    }
+
+    /**
+     * 设置全局异常日志监控，当主线程执行过长时将会打印错误
+     *
+     * @author 狐彻 2020/10/27 22:52
+     */
+    public static void setGlobalExceptionCapture(OnExceptionCapturedListener listener) {
+        final String TAG = "FoxGlobalWatcher";
+        Looper.getMainLooper().setMessageLogging(new Printer() {
+            private long startWorkTimeMillis = 0L;
+
+            @Override
+            public void println(String x) {
+                if (x.startsWith(">>>>> Dispatching to Handler")) {
+                    startWorkTimeMillis = System.currentTimeMillis();
+                } else if (x.startsWith("<<<<< Finished to Handler")) {
+                    long duration = System.currentTimeMillis() - startWorkTimeMillis;
+                    if (duration > 150)
+                        w(TAG, "主线程执行耗时过长 -> " + duration + "毫秒\n" + x);
+                    if (duration > 1000)
+                        e(TAG, "主线程执行耗时过长 -> " + duration + "毫秒\n" + x);
+                }
+            }
+        });
+
+        Handler handler = new Handler(Looper.getMainLooper());
+        handler.post(() -> {
+            //noinspection InfiniteLoopStatement
+            while (true) {
+                try {
+                    Looper.loop();
+                } catch (Exception e) {
+                    // 主线程崩溃
+                    e(TAG, "主线程异常!!", e);
+                    listener.onCapture(e);
+                }
+            }
+        });
+        Thread.setDefaultUncaughtExceptionHandler((t, e) -> {
+                e(TAG, "异步线程异常!!", e);
+                listener.onCapture(e);
+        });
+    }
+
+    /**
+     * 异常捕捉回调
+     *
+     * @author 狐彻 2020/10/28 8:41
+     */
+    public interface OnExceptionCapturedListener {
+        void onCapture(Throwable e);
     }
 }
