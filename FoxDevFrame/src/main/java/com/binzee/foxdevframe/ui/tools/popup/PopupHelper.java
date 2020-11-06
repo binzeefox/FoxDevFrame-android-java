@@ -16,7 +16,7 @@ import androidx.fragment.app.DialogFragment;
 
 import com.binzee.foxdevframe.FoxCore;
 import com.binzee.foxdevframe.ui.views.CustomDialogFragment;
-import com.binzee.foxdevframe.utils.DimenUtil;
+import com.binzee.foxdevframe.utils.phone.DimenUtil;
 
 /**
  * 弹窗、提示工具
@@ -68,7 +68,7 @@ public class PopupHelper {
      *
      * @author 狐彻 2020/10/21 10:09
      */
-    public void showToastAsap(CharSequence text, int duration) {
+    public void showToastNow(CharSequence text, int duration) {
         if (mToast != null) mToast.cancel();
         showToast(text, duration);
     }

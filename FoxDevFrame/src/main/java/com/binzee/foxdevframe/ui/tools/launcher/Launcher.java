@@ -26,7 +26,7 @@ import java.util.concurrent.Executor;
  */
 public class Launcher {
     @NonNull
-    private Context ctx;
+    private final Context ctx;
 
     private Launcher(@NonNull Context ctx) {
         this.ctx = ctx;

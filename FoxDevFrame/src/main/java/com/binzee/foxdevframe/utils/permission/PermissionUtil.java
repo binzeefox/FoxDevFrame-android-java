@@ -1,7 +1,5 @@
 package com.binzee.foxdevframe.utils.permission;
 
-import android.app.Activity;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.RestrictTo;
 import androidx.appcompat.app.AppCompatActivity;
@@ -9,15 +7,15 @@ import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
-import com.binzee.foxdevframe.ui.tools.launcher.SystemShortCutLauncher;
 import com.binzee.foxdevframe.utils.LogUtil;
-import com.binzee.foxdevframe.utils.requests.BaseRequestFragment;
-import com.binzee.foxdevframe.utils.requests.BaseRequester;
+import com.binzee.foxdevframe.ui.tools.requests.BaseRequester;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;
+import static androidx.annotation.RestrictTo.Scope.LIBRARY;
 import static androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX;
 
 /**
@@ -26,8 +24,8 @@ import static androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX;
  * @author 狐彻
  * 2020/10/21 16:40
  */
-public class PermissionChecker extends BaseRequester implements PermissionCheckerInterface{
-    private static final String TAG = "PermissionChecker";
+public class PermissionUtil extends BaseRequester implements PermissionCheckerInterface{
+    private static final String TAG = "PermissionUtil";
     private final List<String> permissionList = new ArrayList<>();  //容器
 
     /**
@@ -36,7 +34,7 @@ public class PermissionChecker extends BaseRequester implements PermissionChecke
      * @param fragmentManager   碎片管理器
      * @author 狐彻 2020/10/21 16:51
      */
-    public PermissionChecker(FragmentManager fragmentManager) {
+    public PermissionUtil(FragmentManager fragmentManager) {
         super(fragmentManager);
     }
 
@@ -45,8 +43,8 @@ public class PermissionChecker extends BaseRequester implements PermissionChecke
      *
      * @author 狐彻 2020/10/25 15:24
      */
-    public static PermissionChecker with(AppCompatActivity activity) {
-        return new PermissionChecker(activity.getSupportFragmentManager());
+    public static PermissionUtil with(AppCompatActivity activity) {
+        return new PermissionUtil(activity.getSupportFragmentManager());
     }
 
     /**
@@ -54,8 +52,8 @@ public class PermissionChecker extends BaseRequester implements PermissionChecke
      *
      * @author 狐彻 2020/10/25 15:24
      */
-    public static PermissionChecker with(Fragment fragment) {
-        return new PermissionChecker(fragment.getChildFragmentManager());
+    public static PermissionUtil with(Fragment fragment) {
+        return new PermissionUtil(fragment.getChildFragmentManager());
     }
 
     /**
@@ -63,8 +61,8 @@ public class PermissionChecker extends BaseRequester implements PermissionChecke
      *
      * @author 狐彻 2020/10/25 15:25
      */
-    public static PermissionChecker with(FragmentManager fragmentManager) {
-        return new PermissionChecker(fragmentManager);
+    public static PermissionUtil with(FragmentManager fragmentManager) {
+        return new PermissionUtil(fragmentManager);
     }
 
     @NonNull
@@ -75,7 +73,7 @@ public class PermissionChecker extends BaseRequester implements PermissionChecke
 
     @NonNull
     @Override
-    protected BaseRequestFragment createFragment() {
+    protected Fragment createFragment() {
         return new InnerFragment();
     }
 
@@ -86,7 +84,7 @@ public class PermissionChecker extends BaseRequester implements PermissionChecke
     }
 
     @Override
-    public PermissionCheckerInterface addPermissions(List<String> permissionList) {
+    public PermissionCheckerInterface addPermissions(Collection<String> permissionList) {
         this.permissionList.addAll(permissionList);
         return this;
     }
@@ -105,7 +103,8 @@ public class PermissionChecker extends BaseRequester implements PermissionChecke
     @Override
     public void checkAndRequest(int requestCode, OnCheckResultListener listener) {
         List<String> failedList = getFragment().check(permissionList);
-        getFragment().request(requestCode, failedList, listener);
+        if (failedList.isEmpty()) listener.onResult(requestCode, new ArrayList<>(), new ArrayList<>());
+        else getFragment().request(requestCode, failedList, listener);
     }
 
     @Override
@@ -122,8 +121,8 @@ public class PermissionChecker extends BaseRequester implements PermissionChecke
      *
      * @author 狐彻 2020/10/21 17:04
      */
-    @RestrictTo(LIBRARY_GROUP_PREFIX)
-    public static class InnerFragment extends BaseRequestFragment {
+    @RestrictTo(LIBRARY)
+    public static class InnerFragment extends Fragment {
         private volatile OnCheckResultListener listener = null;
 
         /**

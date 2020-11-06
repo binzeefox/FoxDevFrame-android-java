@@ -1,6 +1,7 @@
-package com.binzee.foxdevframe.utils.requests;
+package com.binzee.foxdevframe.ui.tools.requests;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
 /**
@@ -13,7 +14,7 @@ public abstract class BaseRequester {
 
     // 内部碎片
     // @author 狐彻 2020/10/21 16:59
-    private final BaseRequestFragment mFragment;
+    private final Fragment mFragment;
 
     /**
      * 构造器
@@ -22,7 +23,7 @@ public abstract class BaseRequester {
      * @author 狐彻 2020/10/21 16:51
      */
     public BaseRequester(FragmentManager fragmentManager) {
-        BaseRequestFragment fragment = (BaseRequestFragment) fragmentManager.findFragmentByTag(getFragmentTag());
+        Fragment fragment = fragmentManager.findFragmentByTag(getFragmentTag());
         if (fragment != null) {
             mFragment = fragment;
             return;
@@ -49,14 +50,14 @@ public abstract class BaseRequester {
      * @author 狐彻 2020/10/21 16:56
      */
     @NonNull
-    protected abstract BaseRequestFragment createFragment();
+    protected abstract Fragment createFragment();
 
     /**
      * 获取碎片
      *
      * @author 狐彻 2020/10/21 16:59
      */
-    protected BaseRequestFragment getFragment() {
+    protected Fragment getFragment() {
         return mFragment;
     }
 }

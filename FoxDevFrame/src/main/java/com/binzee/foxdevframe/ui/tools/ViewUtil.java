@@ -12,6 +12,8 @@ import android.widget.TextView;
 import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
 
+import com.binzee.foxdevframe.R;
+
 import java.util.Hashtable;
 
 /**
@@ -24,8 +26,6 @@ public class ViewUtil {
     //目标View
     @NonNull
     private final View target;
-    //工作Handler
-    private static WorkHandler workHandler;
 
     /**
      * 构造器
@@ -34,7 +34,6 @@ public class ViewUtil {
      */
     protected ViewUtil(@NonNull View view) {
         this.target = view;
-        if (workHandler == null) initWorkHandler();
     }
 
     /**
@@ -65,7 +64,7 @@ public class ViewUtil {
     private void initWorkHandler() {
         HandlerThread thread = new HandlerThread("view_util_handler");
         thread.start();
-        workHandler = new WorkHandler(thread.getLooper());
+//        workHandler = new WorkHandler(thread.getLooper());
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -99,14 +98,18 @@ public class ViewUtil {
      * @author 狐彻 2020/10/24 10:07
      */
     public void setOnClickListenerDebounce(View.OnClickListener listener, long skip) {
-        long timeStamp = System.currentTimeMillis();
-        target.setOnClickListener(v -> {
-            if (workHandler.debounceFlag.get(timeStamp)) return;
-            Message message = new Message();
-            message.what = WorkHandler.DEBOUNCE_START;
-            message.obj = new long[]{timeStamp, skip};
-            workHandler.sendMessage(message);
-            listener.onClick(v);
+        target.setOnClickListener(new View.OnClickListener() {
+            final long _skip = skip;
+
+            @Override
+            public void onClick(View v) {
+                long curTimeStamp = System.currentTimeMillis();
+                Long tagTimeStamp = (Long) v.getTag(R.id.view_util_debounce_id);
+                if (tagTimeStamp == null || tagTimeStamp + _skip < curTimeStamp) {
+                    v.setTag(R.id.view_util_debounce_id, curTimeStamp);
+                    listener.onClick(v);
+                }
+            }
         });
     }
 
@@ -152,48 +155,6 @@ public class ViewUtil {
      */
     public boolean isTextView() {
         return target instanceof TextView;
-    }
-
-    ///////////////////////////////////////////////////////////////////////////
-    // 内部类
-    ///////////////////////////////////////////////////////////////////////////
-
-    /**
-     * 工作Handler
-     *
-     * @author 狐彻 2020/10/24 10:15
-     */
-    private static class WorkHandler extends Handler {
-        static final int DEBOUNCE_START = 0;
-
-        //防抖标志，key为点击时间，flag为是否应跳过
-        private final Hashtable<Long, Boolean> debounceFlag = new Hashtable<>();
-
-        public WorkHandler(@NonNull Looper looper) {
-            super(looper);
-        }
-
-        @Override
-        public void handleMessage(@NonNull Message msg) {
-            switch (msg.what) {
-                case DEBOUNCE_START:    //开始防抖
-                    startDebounce((long[]) msg.obj);
-                    break;
-                default:
-                    break;
-            }
-        }
-
-        /**
-         * 开始防抖标记
-         *
-         * @param args [首次点击时间, 防抖间隔时间毫秒]
-         * @author 狐彻 2020/10/24 10:21
-         */
-        private void startDebounce(long[] args) {
-            debounceFlag.put(args[0], true);
-            postDelayed(() -> debounceFlag.put(args[0], false), args[1]);
-        }
     }
 
     ///////////////////////////////////////////////////////////////////////////

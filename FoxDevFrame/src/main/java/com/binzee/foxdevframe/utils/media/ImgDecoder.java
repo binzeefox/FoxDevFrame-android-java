@@ -1,4 +1,4 @@
-package com.binzee.foxdevframe.utils.image;
+package com.binzee.foxdevframe.utils.media;
 
 import android.annotation.TargetApi;
 import android.graphics.Bitmap;

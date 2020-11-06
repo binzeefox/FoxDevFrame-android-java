@@ -8,7 +8,7 @@ import com.binzee.foxdevframe.ui.tools.launcher.Launcher;
 import com.binzee.foxdevframe.ui.tools.popup.PopupHelper;
 import com.binzee.foxdevframe.utils.LogUtil;
 import com.binzee.foxdevframe.utils.ThreadUtils;
-import com.binzee.foxdevframe.utils.permission.PermissionChecker;
+import com.binzee.foxdevframe.utils.permission.PermissionUtil;
 
 public class MainActivity extends FoxActivity {
     private static final String TAG = "MainActivity";
@@ -21,6 +21,7 @@ public class MainActivity extends FoxActivity {
     @Override
     protected void onCreate() {
 //        setFullScreen();
+        LogUtil.enableANRLog();
         LogUtil.setGlobalExceptionCapture(e ->
                 LogUtil.e(TAG, "onCreate: ", e));
 
@@ -28,17 +29,17 @@ public class MainActivity extends FoxActivity {
     }
 
     private void test() {
-//        permissionTest();
+        permissionTest();
 //        systemSettingTest();
 //        systemSettingPopupTest();
-        ThreadUtils.get().executeIO(() -> {
-            throw new RuntimeException("这是一个子线程内运行时异常");
-        });
-        throw new RuntimeException("这是一个运行时异常");
+//        ThreadUtils.get().executeIO(() -> {
+//            throw new RuntimeException("这是一个子线程内运行时异常");
+//        });
+//        throw new RuntimeException("这是一个运行时异常");
     }
 
     private void permissionTest() {
-        PermissionChecker.with(this)
+        PermissionUtil.with(this)
                 .addPermission(Manifest.permission.CAMERA)
                 .addPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 .addPermission(Manifest.permission.READ_EXTERNAL_STORAGE)

@@ -1,6 +1,5 @@
-package com.binzee.foxdevframe.utils;
+package com.binzee.foxdevframe.utils.phone;
 
-import android.Manifest;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.Context;
@@ -19,6 +18,7 @@ import androidx.annotation.RequiresApi;
 import androidx.annotation.RequiresPermission;
 
 import com.binzee.foxdevframe.FoxCore;
+import com.binzee.foxdevframe.utils.LogUtil;
 
 import java.net.InetAddress;
 import java.net.NetworkInterface;

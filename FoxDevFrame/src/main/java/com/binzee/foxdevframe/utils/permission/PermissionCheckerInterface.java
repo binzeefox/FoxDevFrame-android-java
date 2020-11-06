@@ -1,5 +1,6 @@
 package com.binzee.foxdevframe.utils.permission;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -40,7 +41,7 @@ public interface PermissionCheckerInterface {
      *
      * @author 狐彻 2020/10/21 16:34
      */
-    PermissionCheckerInterface addPermissions(List<String> permissionList);
+    PermissionCheckerInterface addPermissions(Collection<String> permissionList);
 
     /**
      * 仅检查

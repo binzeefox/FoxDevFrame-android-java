@@ -1,4 +1,4 @@
-package com.binzee.foxdevframe.utils;
+package com.binzee.foxdevframe.utils.phone;
 
 import com.binzee.foxdevframe.FoxCore;
 

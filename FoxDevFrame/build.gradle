@@ -1,6 +1,12 @@
 plugins {
     id 'com.android.library'
+    id 'com.github.dcendents.android-maven'
+    id 'maven'
 }
+group='com.github.binzeefox'
+
+def _versionCode = 1
+def _versionName = '0.0.1'
 
 android {
     compileSdkVersion 30
@@ -9,8 +15,8 @@ android {
     defaultConfig {
         minSdkVersion 23
         targetSdkVersion 30
-        versionCode 1
-        versionName "1.0"
+        versionCode _versionCode
+        versionName _versionName
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
@@ -37,10 +43,25 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
 
     //StartUp
-    api "androidx.startup:startup-runtime:1.0.0-rc01"
-
-//    //Rx
-//    api 'io.reactivex.rxjava3:rxjava:3.0.4'
-//    api 'io.reactivex.rxjava3:rxandroid:3.0.0'
-//    api 'io.reactivex.rxjava2:rxandroid:2.1.1'
+    implementation "androidx.startup:startup-runtime:1.0.0-rc01"
 }
+
+
+def jar_name = "FoxFrame-${_versionName}.jar"
+
+task makeJar(type: Copy) {
+    //删除存在的
+    delete "build/libs/${jar_name}"
+    //设置拷贝的文件
+    from('build/intermediates/aar_main_jar/release/')
+    //打进jar包后的文件目录
+    into('build/libs/')
+    //将classes.jar放入build/libs/目录下
+    //include ,exclude参数来设置过滤
+    //（我们只关心classes.jar这个文件）
+    include('classes.jar')
+    //重命名
+    rename ('classes.jar', jar_name)
+}
+
+makeJar.dependsOn(build)
