@@ -5,6 +5,9 @@ import android.app.Application;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.os.PersistableBundle;
 import android.view.View;
 import android.view.Window;
@@ -18,6 +21,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.binzee.foxdevframe.ui.tools.popup.PopupHelper;
 import com.binzee.foxdevframe.utils.LogUtil;
 
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * Activity基类
  *
@@ -26,6 +32,11 @@ import com.binzee.foxdevframe.utils.LogUtil;
  */
 public abstract class FoxActivity extends AppCompatActivity implements UiInterface {
     private static final String TAG = "FoxActivity";
+
+    //二次点击专用
+    private OnPressTwiceListener pressTwiceListener = null;
+    private long lastBackPressedTimeMills = 0;  //上次点击返回键时间
+    private long backPressPeriod = 0;   //验证两次点击时间间隔
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -43,7 +54,7 @@ public abstract class FoxActivity extends AppCompatActivity implements UiInterfa
 
     @Override
     public void toast(CharSequence text) {
-        PopupHelper.get().showToast(text, Toast.LENGTH_LONG);
+        PopupHelper.get().showToast(text, Toast.LENGTH_SHORT);
     }
 
     @Override
@@ -51,10 +62,46 @@ public abstract class FoxActivity extends AppCompatActivity implements UiInterfa
         return this;
     }
 
+    @Override
+    public void onBackPressed() {
+        long timeStamp = System.currentTimeMillis();
+        if (pressTwiceListener == null) super.onBackPressed();
+        else if (timeStamp > (backPressPeriod + lastBackPressedTimeMills)) {
+            //当前时间大于返回键过期时间，时间过期
+            lastBackPressedTimeMills = timeStamp;
+            pressTwiceListener.onFirstPress();
+        } else {
+            //当前时间小于返回键过期时间。二次点击
+            lastBackPressedTimeMills = 0;
+            pressTwiceListener.onSecondPress();
+        }
+    }
+
+    /**
+     * 暴露父类onBackPressed
+     *
+     * fixme 我知道这么做挺蠢的。。。不过先这样，等我学会更聪明的写法就改掉
+     * @author 狐彻 2020/11/06 17:10
+     */
+    public void superOnBackPressed() {
+        super.onBackPressed();
+    }
 
     ///////////////////////////////////////////////////////////////////////////
     // 工具方法
     ///////////////////////////////////////////////////////////////////////////
+
+    /**
+     * 设置检查二次点击返回键
+     *
+     * @param listener  二次点击回调
+     * @param backPressPeriod   两次点击间隔毫秒
+     * @author 狐彻 2020/11/06 17:04
+     */
+    public void setBackPressTwiceCheck(OnPressTwiceListener listener, long backPressPeriod) {
+        this.pressTwiceListener = listener;
+        this.backPressPeriod = backPressPeriod;
+    }
 
     /**
      * 设置全屏
@@ -162,5 +209,27 @@ public abstract class FoxActivity extends AppCompatActivity implements UiInterfa
         public void onActivityDestroyed(@NonNull Activity activity) {
             LogUtil.v(TAG, "onActivityDestroyed: " + activity.getClass().getName());
         }
+    }
+
+    /**
+     * 二次点击监听器
+     *
+     * @author 狐彻 2020/11/06 16:30
+     */
+    public interface OnPressTwiceListener {
+
+        /**
+         * 第一次点击
+         *
+         * @author 狐彻 2020/11/06 16:31
+         */
+        void onFirstPress();
+
+        /**
+         * 第二次点击
+         *
+         * @author 狐彻 2020/11/06 16:31
+         */
+        void onSecondPress();
     }
 }

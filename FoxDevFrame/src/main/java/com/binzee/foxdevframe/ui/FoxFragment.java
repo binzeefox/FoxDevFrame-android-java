@@ -21,7 +21,7 @@ public abstract class FoxFragment extends Fragment implements UiInterface {
 
     @Override
     public void toast(CharSequence text) {
-        PopupHelper.get().showToast(text, Toast.LENGTH_LONG);
+        PopupHelper.get().showToast(text, Toast.LENGTH_SHORT);
     }
 
 

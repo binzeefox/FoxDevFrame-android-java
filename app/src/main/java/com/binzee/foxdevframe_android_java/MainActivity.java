@@ -7,7 +7,7 @@ import com.binzee.foxdevframe.ui.FoxActivity;
 import com.binzee.foxdevframe.ui.tools.launcher.Launcher;
 import com.binzee.foxdevframe.ui.tools.popup.PopupHelper;
 import com.binzee.foxdevframe.utils.LogUtil;
-import com.binzee.foxdevframe.utils.ThreadUtils;
+import com.binzee.foxdevframe.utils.TextTools;
 import com.binzee.foxdevframe.utils.permission.PermissionUtil;
 
 public class MainActivity extends FoxActivity {
@@ -26,6 +26,25 @@ public class MainActivity extends FoxActivity {
                 LogUtil.e(TAG, "onCreate: ", e));
 
         findViewById(R.id.confirm_button).setOnClickListener(v -> test());
+
+        TextTools.IDCardUtil util = TextTools.get("210682199403110018").getIDCardUtil();
+        String city = "身份证地址：" + util.getProvinceName();
+        String birthDay = " 出生日期：" + util.getBirthDay();
+        String gender = " 性别：" + (util.isMale() ? "男" : "女");
+        LogUtil.d(TAG, "onCreate: idcard  " + city + birthDay + gender);
+
+        //设置二次返回键点击验证
+        setBackPressTwiceCheck(new OnPressTwiceListener() {
+            @Override
+            public void onFirstPress() {
+                toast("两秒内第二次点击返回键返回");
+            }
+
+            @Override
+            public void onSecondPress() {
+                superOnBackPressed();
+            }
+        }, 2000);
     }
 
     private void test() {

@@ -93,6 +93,31 @@ public class ViewUtil {
     }
 
     /**
+     * 设置二次点击监听器
+     *
+     * @param listener  二次点击监听器
+     * @param period    第二次点击间隔
+     * @author 狐彻 2020/11/06 16:31
+     */
+    public void setOnClickTwiceClickListener(@NonNull OnClickTwiceListener listener, long period) {
+        target.setOnClickListener(new View.OnClickListener() {
+            long disableTime = 0;
+
+            @Override
+            public void onClick(View v) {
+                if (System.currentTimeMillis() < disableTime) {
+                    //第二次点击
+                    disableTime = 0;
+                    listener.onSecondClick(v);
+                } else {
+                    disableTime = System.currentTimeMillis() + period;
+                    listener.onFirstClick(v);
+                }
+            }
+        });
+    }
+
+    /**
      * 添加防抖点击监听
      *
      * @author 狐彻 2020/10/24 10:07
@@ -160,6 +185,28 @@ public class ViewUtil {
     ///////////////////////////////////////////////////////////////////////////
     // 内部类
     ///////////////////////////////////////////////////////////////////////////
+
+    /**
+     * 二次点击监听器
+     *
+     * @author 狐彻 2020/11/06 16:30
+     */
+    public interface OnClickTwiceListener {
+
+        /**
+         * 第一次点击
+         *
+         * @author 狐彻 2020/11/06 16:31
+         */
+        void onFirstClick(View view);
+
+        /**
+         * 第二次点击
+         *
+         * @author 狐彻 2020/11/06 16:31
+         */
+        void onSecondClick(View view);
+    }
 
     /**
      * 空目标异常

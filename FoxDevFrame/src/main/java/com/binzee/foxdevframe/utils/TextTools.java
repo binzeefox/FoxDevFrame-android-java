@@ -17,17 +17,17 @@ import java.util.regex.Pattern;
  * @author 狐彻
  * 2020/11/06 15:11
  */
-public class TextUtil {
+public class TextTools {
 
     @NonNull
     private final String text;  //目标文字
 
-    public TextUtil(@NonNull String text) {
+    public TextTools(@NonNull String text) {
         this.text = text;
     }
 
-    public static TextUtil get(String text) {
-        return new TextUtil(text);
+    public static TextTools get(String text) {
+        return new TextTools(text);
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -127,53 +127,53 @@ public class TextUtil {
      * @author 狐彻 2020/11/06 15:24
      */
     public class IDCardUtil {
-        private final Map<String, String> cCityMap = new HashMap<>();    // 身份证的地理字典
+        private final Map<String, String> cProvinceMap = new HashMap<>();    // 身份证的地理字典
 
         private IDCardUtil() {
-            cCityMap.put("11", "北京");
-            cCityMap.put("12", "天津");
-            cCityMap.put("13", "河北");
-            cCityMap.put("14", "山西");
-            cCityMap.put("15", "内蒙古");
-            cCityMap.put("21", "辽宁");
-            cCityMap.put("22", "吉林");
-            cCityMap.put("23", "黑龙江");
-            cCityMap.put("31", "上海");
-            cCityMap.put("32", "江苏");
-            cCityMap.put("33", "浙江");
-            cCityMap.put("34", "安徽");
-            cCityMap.put("35", "福建");
-            cCityMap.put("36", "江西");
-            cCityMap.put("37", "山东");
-            cCityMap.put("41", "河南");
-            cCityMap.put("42", "湖北");
-            cCityMap.put("43", "湖南");
-            cCityMap.put("44", "广东");
-            cCityMap.put("45", "广西");
-            cCityMap.put("46", "海南");
-            cCityMap.put("50", "重庆");
-            cCityMap.put("51", "四川");
-            cCityMap.put("52", "贵州");
-            cCityMap.put("53", "云南");
-            cCityMap.put("54", "西藏");
-            cCityMap.put("61", "陕西");
-            cCityMap.put("62", "甘肃");
-            cCityMap.put("63", "青海");
-            cCityMap.put("64", "宁夏");
-            cCityMap.put("65", "新疆");
-            cCityMap.put("71", "台湾");
-            cCityMap.put("81", "香港");
-            cCityMap.put("82", "澳门");
-            cCityMap.put("91", "境外");
+            cProvinceMap.put("11", "北京");
+            cProvinceMap.put("12", "天津");
+            cProvinceMap.put("13", "河北");
+            cProvinceMap.put("14", "山西");
+            cProvinceMap.put("15", "内蒙古");
+            cProvinceMap.put("21", "辽宁");
+            cProvinceMap.put("22", "吉林");
+            cProvinceMap.put("23", "黑龙江");
+            cProvinceMap.put("31", "上海");
+            cProvinceMap.put("32", "江苏");
+            cProvinceMap.put("33", "浙江");
+            cProvinceMap.put("34", "安徽");
+            cProvinceMap.put("35", "福建");
+            cProvinceMap.put("36", "江西");
+            cProvinceMap.put("37", "山东");
+            cProvinceMap.put("41", "河南");
+            cProvinceMap.put("42", "湖北");
+            cProvinceMap.put("43", "湖南");
+            cProvinceMap.put("44", "广东");
+            cProvinceMap.put("45", "广西");
+            cProvinceMap.put("46", "海南");
+            cProvinceMap.put("50", "重庆");
+            cProvinceMap.put("51", "四川");
+            cProvinceMap.put("52", "贵州");
+            cProvinceMap.put("53", "云南");
+            cProvinceMap.put("54", "西藏");
+            cProvinceMap.put("61", "陕西");
+            cProvinceMap.put("62", "甘肃");
+            cProvinceMap.put("63", "青海");
+            cProvinceMap.put("64", "宁夏");
+            cProvinceMap.put("65", "新疆");
+            cProvinceMap.put("71", "台湾");
+            cProvinceMap.put("81", "香港");
+            cProvinceMap.put("82", "澳门");
+            cProvinceMap.put("91", "境外");
         }
 
         /**
-         * 获取该身份证城市名称
+         * 获取该身份证省份名称
          *
          * @author binze 2019/12/13 16:21
          */
-        public String getCityName() {
-            return cCityMap.get(text.substring(0, 2));
+        public String getProvinceName() {
+            return cProvinceMap.get(text.substring(0, 2));
         }
 
         /**

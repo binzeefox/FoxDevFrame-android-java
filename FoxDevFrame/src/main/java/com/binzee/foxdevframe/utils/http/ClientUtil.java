@@ -19,7 +19,7 @@ import java.util.concurrent.Callable;
  *
  * TODO unfinished
  * @author 狐彻
- * 2020/10/27 16:45
+ * 2020/10/27 16:45。。
  */
 public class ClientUtil {
     private volatile String baseUrl = "";   //基本路径
