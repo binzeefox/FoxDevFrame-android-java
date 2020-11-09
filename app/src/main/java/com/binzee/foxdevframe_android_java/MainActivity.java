@@ -8,7 +8,14 @@ import com.binzee.foxdevframe.ui.tools.launcher.Launcher;
 import com.binzee.foxdevframe.ui.tools.popup.PopupHelper;
 import com.binzee.foxdevframe.utils.LogUtil;
 import com.binzee.foxdevframe.utils.TextTools;
+import com.binzee.foxdevframe.utils.ThreadUtils;
+import com.binzee.foxdevframe.utils.http.ClientInterface;
+import com.binzee.foxdevframe.utils.http.ClientUtil;
 import com.binzee.foxdevframe.utils.permission.PermissionUtil;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
 
 public class MainActivity extends FoxActivity {
     private static final String TAG = "MainActivity";
@@ -48,13 +55,44 @@ public class MainActivity extends FoxActivity {
     }
 
     private void test() {
-        permissionTest();
+        netWorkTest();
+//        permissionTest();
 //        systemSettingTest();
 //        systemSettingPopupTest();
 //        ThreadUtils.get().executeIO(() -> {
 //            throw new RuntimeException("这是一个子线程内运行时异常");
 //        });
 //        throw new RuntimeException("这是一个运行时异常");
+    }
+
+    private void netWorkTest() {
+        ThreadUtils.get().executeIO(() -> {
+            try {
+                ClientUtil.get().GET("https://www.baidu.com")
+                        .request(new ClientInterface.OnCallListener() {
+
+                            @Override
+                            public void onStart(HttpURLConnection connection) {
+                                LogUtil.d(TAG, "onResponse: " + connection);
+                            }
+
+                            @Override
+                            public void onSuccess(HttpURLConnection connection, int responseCode, InputStream stream) {
+                                String s = ClientUtil.getStringFromInputStream(stream);
+                                LogUtil.d(TAG, "onSuccess: " + s);
+                                connection.disconnect();
+                            }
+
+                            @Override
+                            public void onError(Throwable throwable) {
+                                LogUtil.e(TAG, "onError: ", throwable);
+                            }
+                        });
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
     }
 
     private void permissionTest() {

@@ -236,10 +236,6 @@ public class LogUtil {
             this.e = e;
         }
 
-        public FoxLog(String level, String tag, String message) {
-            this(level, tag, message, null);
-        }
-
         @NonNull
         @Override
         public String toString() {
