@@ -128,7 +128,7 @@ public class LogUtil {
                     long duration = System.currentTimeMillis() - startWorkTimeMillis;
                     if (duration > 150)
                         w(TAG, "主线程执行耗时过长 -> " + duration + "毫秒\n" + x);
-                    if (duration > 1000)
+                    else if (duration > 1000)
                         e(TAG, "主线程执行耗时过长 -> " + duration + "毫秒\n" + x);
                 }
             }
@@ -141,7 +141,7 @@ public class LogUtil {
      * @author 狐彻 2020/10/27 22:52
      */
     public static void setGlobalExceptionCapture(OnExceptionCapturedListener listener) {
-        final String TAG = "FoxGlobalWatcher";
+        final String TAG = "FoxGlobalLogger";
 
         Handler handler = new Handler(Looper.getMainLooper());
         handler.post(() -> {

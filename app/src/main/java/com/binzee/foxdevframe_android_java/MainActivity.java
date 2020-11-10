@@ -12,6 +12,7 @@ import com.binzee.foxdevframe.utils.ThreadUtils;
 import com.binzee.foxdevframe.utils.http.ClientInterface;
 import com.binzee.foxdevframe.utils.http.ClientUtil;
 import com.binzee.foxdevframe.utils.permission.PermissionUtil;
+import com.binzee.foxdevframe.utils.phone.bluetooth.BleHelper;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -55,7 +56,7 @@ public class MainActivity extends FoxActivity {
     }
 
     private void test() {
-        netWorkTest();
+//        netWorkTest();
 //        permissionTest();
 //        systemSettingTest();
 //        systemSettingPopupTest();
@@ -88,7 +89,6 @@ public class MainActivity extends FoxActivity {
                                 LogUtil.e(TAG, "onError: ", throwable);
                             }
                         });
-
             } catch (IOException e) {
                 e.printStackTrace();
             }
