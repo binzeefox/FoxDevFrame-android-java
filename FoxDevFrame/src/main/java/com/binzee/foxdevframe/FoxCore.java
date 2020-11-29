@@ -5,8 +5,11 @@ import android.app.Application;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -14,7 +17,9 @@ import androidx.annotation.Nullable;
 
 import com.binzee.foxdevframe.ui.FoxActivity;
 import com.binzee.foxdevframe.utils.LogUtil;
+import com.binzee.foxdevframe.utils.phone.resource.SharedPreferenceUtil;
 
+import java.util.Locale;
 import java.util.Stack;
 
 /**
@@ -67,6 +72,28 @@ public class FoxCore {
         else
             FoxCoreHolder.instance.application = (Application) context.getApplicationContext();
         FoxCoreHolder.instance.registerActivityCallback();
+
+        // 设置语言
+        // @author 狐彻 2020/11/17 15:30
+        String languageTag = SharedPreferenceUtil.get()
+                .readString("FOX_SETTING", "languageTag"
+                        , Locale.getDefault().toLanguageTag());
+        Locale locale = Locale.forLanguageTag(languageTag);
+        get().setLanguage(locale);
+    }
+
+    /**
+     * 设置语言
+     *
+     * @author 狐彻 2020/11/17 15:26
+     */
+    private void setLanguage(@NonNull Locale locale) {
+        Resources r = FoxCore.getApplication().getResources();
+        DisplayMetrics m = r.getDisplayMetrics();
+        Configuration c = r.getConfiguration();
+
+        c.setLocale(locale);
+        r.updateConfiguration(c, m);
     }
 
     /**
@@ -232,7 +259,7 @@ public class FoxCore {
          *
          * @author 狐彻 2020/10/21 9:23
          */
-        public boolean superRemove(@NonNull Object o) {
+        private boolean superRemove(@NonNull Object o) {
             return super.remove(o);
         }
 
@@ -246,8 +273,6 @@ public class FoxCore {
             push(o);
         }
     }
-
-    ;
 
     /**
      * 单例容器

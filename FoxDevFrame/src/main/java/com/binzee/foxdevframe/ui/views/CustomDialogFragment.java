@@ -16,15 +16,10 @@ import androidx.fragment.app.DialogFragment;
  */
 public class CustomDialogFragment extends DialogFragment {
     private static final String TAG = "CustomDialogFragment";
-    private Dialog mDialog;
+    private final Dialog mDialog;
 
     public CustomDialogFragment(Dialog dialog) {
         mDialog = dialog;
-    }
-
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
     }
 
     @NonNull
@@ -33,6 +28,8 @@ public class CustomDialogFragment extends DialogFragment {
         return mDialog;
     }
 
+    @Nullable
+    @Override
     public Dialog getDialog() {
         return mDialog;
     }

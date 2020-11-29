@@ -39,8 +39,6 @@ public class AutoAdjustImageView extends AppCompatImageView {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-
         Drawable d = getDrawable(); //先获取到图片
         if (d == null) {    //没有图片则结束
             super.onMeasure(widthMeasureSpec, heightMeasureSpec);

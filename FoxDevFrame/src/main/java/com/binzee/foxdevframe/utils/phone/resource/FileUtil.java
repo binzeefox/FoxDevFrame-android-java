@@ -1,4 +1,4 @@
-package com.binzee.foxdevframe.utils;
+package com.binzee.foxdevframe.utils.phone.resource;
 
 import android.os.Environment;
 import android.text.TextUtils;
@@ -7,6 +7,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.binzee.foxdevframe.FoxCore;
+import com.binzee.foxdevframe.utils.LogUtil;
 
 import java.io.File;
 import java.io.IOException;

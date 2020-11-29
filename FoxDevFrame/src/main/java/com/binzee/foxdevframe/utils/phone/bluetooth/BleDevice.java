@@ -195,7 +195,7 @@ public interface BleDevice {
          *
          * @author 狐彻 2020/11/10 10:47
          */
-        public void onCharacteristicNotification(BluetoothGatt gatt
+        public void onCharacteristicChanged(BluetoothGatt gatt
                 , BluetoothGattCharacteristic characteristic) {
         }
     }

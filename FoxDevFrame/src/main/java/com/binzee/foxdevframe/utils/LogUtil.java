@@ -168,7 +168,7 @@ public class LogUtil {
      *
      * @author 狐彻 2020/11/06 14:47
      */
-    private static String getLogRecord() {
+    public static String getLogRecord() {
         FoxLog log = firstLog;
         StringBuilder sb = new StringBuilder();
         while (log != null) {

@@ -30,7 +30,7 @@ public class ActivityTarget implements LauncherTarget {
      * @param intent    目标Intent
      * @author 狐彻 2020/10/22 9:28
      */
-    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
+    @RestrictTo(RestrictTo.Scope.LIBRARY)
     public ActivityTarget(@NonNull Context context, @NonNull Intent intent) {
         ctx = context;
         this.intent = intent;
@@ -55,7 +55,7 @@ public class ActivityTarget implements LauncherTarget {
      *
      * @author 狐彻 2020/10/22 9:37
      */
-    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
+    @RestrictTo(RestrictTo.Scope.LIBRARY)
     public void setOptions(Bundle options) {
         this.options = options;
     }

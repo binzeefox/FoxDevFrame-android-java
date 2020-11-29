@@ -22,15 +22,21 @@ import java.util.List;
 class FoxBleScanner implements BleScanner {
     private static final String TAG = "FoxBleScanner";
     private final BluetoothAdapter adapter;
-    private final ScanCallback callback;
+    private ScanCallback callback;
 
     private final List<ScanFilter> filterList = new ArrayList<>();  //扫描筛选器
     private long timeout = -1;   //扫描时间
     private ScanSettings scanSettings = null;   //扫描设置
 
-    FoxBleScanner(BluetoothAdapter adapter, ScanCallback callback) {
+    FoxBleScanner(BluetoothAdapter adapter) {
         this.adapter = adapter;
+    }
+
+
+    @Override
+    public BleScanner setCallback(ScanCallback callback) {
         this.callback = callback;
+        return this;
     }
 
     @Override
@@ -60,15 +66,19 @@ class FoxBleScanner implements BleScanner {
     @Override
     @RequiresPermission(Manifest.permission.BLUETOOTH_ADMIN)
     public void beginScan() {
+        if (callback == null) throw new RuntimeException(
+                new IllegalAccessException("Call setCallback(ScanCallback callback) first!!!")
+        );
         adapter.getBluetoothLeScanner().startScan(filterList, scanSettings, callback);
         if (timeout < 0) timeout = 0;
-        if (timeout != -1) new Handler()
-                .postDelayed(this::stopScan, timeout);
+        if (timeout != -1) new Handler().postDelayed(this::stopScan, timeout);
     }
 
     @Override
     @RequiresPermission(Manifest.permission.BLUETOOTH_ADMIN)
     public void stopScan() {
+        if (callback instanceof BleScanCallback)
+            ((BleScanCallback) callback).onStop();
         adapter.getBluetoothLeScanner().stopScan(callback);
     }
 }

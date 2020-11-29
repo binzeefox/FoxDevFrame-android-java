@@ -69,7 +69,7 @@ public class ActivityRequester extends BaseRequester implements ActivityRequestI
 
     @Override
     public void request(Intent intent, int requestCode, OnResultCallback callback) {
-        request(intent, requestCode, callback);
+        request(intent, requestCode, callback, null);
     }
 
     @Override

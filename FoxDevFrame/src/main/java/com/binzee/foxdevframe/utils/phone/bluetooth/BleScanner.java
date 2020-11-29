@@ -1,5 +1,6 @@
 package com.binzee.foxdevframe.utils.phone.bluetooth;
 
+import android.bluetooth.le.ScanCallback;
 import android.bluetooth.le.ScanFilter;
 import android.bluetooth.le.ScanSettings;
 
@@ -12,6 +13,13 @@ import java.util.List;
  * 2020/11/10 9:26
  */
 public interface BleScanner {
+
+    /**
+     * 设置回调
+     *
+     * @author 狐彻 2020/11/11 10:04
+     */
+    BleScanner setCallback(ScanCallback callback);
 
     /**
      * 设置扫描时间
@@ -58,4 +66,8 @@ public interface BleScanner {
     ///////////////////////////////////////////////////////////////////////////
     // 回调
     ///////////////////////////////////////////////////////////////////////////
+
+    abstract class BleScanCallback extends ScanCallback {
+        public void onStop(){}
+    }
 }

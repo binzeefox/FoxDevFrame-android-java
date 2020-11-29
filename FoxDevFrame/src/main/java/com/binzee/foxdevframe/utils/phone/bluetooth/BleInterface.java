@@ -1,7 +1,6 @@
 package com.binzee.foxdevframe.utils.phone.bluetooth;
 
 import android.bluetooth.BluetoothDevice;
-import android.bluetooth.le.ScanCallback;
 import android.content.Context;
 
 import androidx.annotation.Nullable;
@@ -41,7 +40,7 @@ public interface BleInterface {
      *
      * @author 狐彻 2020/11/10 9:27
      */
-    BleScanner getScanner(ScanCallback callback);
+    BleScanner getScanner();
 
     /**
      * 获取低功耗蓝牙包装类
@@ -49,4 +48,6 @@ public interface BleInterface {
      * @author 狐彻 2020/11/10 9:45
      */
     BleDevice getToolDevice(BluetoothDevice device);
+
+    BleDevice getToolDeviceByMac(String mac);
 }

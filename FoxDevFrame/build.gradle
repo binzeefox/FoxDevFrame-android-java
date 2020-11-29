@@ -43,11 +43,11 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
 
     //StartUp
-    implementation "androidx.startup:startup-runtime:1.0.0-rc01"
+    implementation "androidx.startup:startup-runtime:1.0.0"
 }
 
 
-def jar_name = "FoxFrame-${_versionName}.jar"
+def jar_name = "FoxFrame-java-${_versionName}.jar"
 
 task makeJar(type: Copy) {
     //删除存在的

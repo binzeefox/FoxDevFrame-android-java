@@ -1,6 +1,7 @@
 package com.binzee.foxdevframe.ui.tools;
 
 import android.app.Activity;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.os.HandlerThread;
@@ -13,6 +14,7 @@ import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
 
 import com.binzee.foxdevframe.R;
+import com.binzee.foxdevframe.utils.ThreadUtils;
 
 import java.util.Hashtable;
 
@@ -54,17 +56,6 @@ public class ViewUtil {
         View view = activity.findViewById(targetId);
         if (view == null) throw new TargetIsNullException();
         return with(view);
-    }
-
-    /**
-     * 初始化工作Handler
-     *
-     * @author 狐彻 2020/10/24 10:12
-     */
-    private void initWorkHandler() {
-        HandlerThread thread = new HandlerThread("view_util_handler");
-        thread.start();
-//        workHandler = new WorkHandler(thread.getLooper());
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -138,6 +129,37 @@ public class ViewUtil {
         });
     }
 
+    /**
+     * 开启disco模式
+     *
+     * @author 狐彻 2020/11/12 15:06
+     */
+    public void setDiscoMode() {
+        HandlerThread thread = new HandlerThread("view_util_disco");
+        thread.start();
+        new Handler(thread.getLooper()).post(() -> {
+            final int[] r = new int[]{0, 1};
+            final int[] g = new int[]{0, 10};
+            final int[] b = new int[]{0, 20};
+
+            while (true) {
+                try {
+                    Thread.sleep(5);
+                    discoModeValueFnc(r);
+                    discoModeValueFnc(g);
+                    discoModeValueFnc(b);
+
+                    ThreadUtils.runOnUiThread(() -> {
+                        int colorValue = Color.argb(255, r[0], g[0], b[0]);
+                        target.setBackgroundColor(colorValue);
+                    });
+                } catch (InterruptedException e) {
+                    break;
+                }
+            }
+        });
+    }
+
     ///////////////////////////////////////////////////////////////////////////
     // TextView及其子类相关
     ///////////////////////////////////////////////////////////////////////////
@@ -180,6 +202,27 @@ public class ViewUtil {
      */
     public boolean isTextView() {
         return target instanceof TextView;
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+    // 私有方法
+    ///////////////////////////////////////////////////////////////////////////
+
+    /**
+     * disco模式工具方法
+     *
+     * @author 狐彻 2020/11/12 15:05
+     */
+    private void discoModeValueFnc(int[] values) {
+        values[0] += values[1];
+        if (values[0] > 255) {
+            values[0] = 255;
+            values[1] *= -1;
+        }
+        if (values[0] < 0) {
+            values[0] = 0;
+            values[1] *= -1;
+        }
     }
 
     ///////////////////////////////////////////////////////////////////////////

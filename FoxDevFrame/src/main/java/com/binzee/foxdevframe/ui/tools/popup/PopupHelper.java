@@ -131,7 +131,7 @@ public class PopupHelper {
      * @author 狐彻 2020/10/21 10:39
      */
     public void dismissDialog() {
-        if (mDialog != null && !mDialog.isCancelable() && mDialog.getFragmentManager() != null)
+        if (mDialog != null && mDialog.getFragmentManager() != null)
             mDialog.dismiss();
         mDialog = null;
     }
@@ -162,7 +162,7 @@ public class PopupHelper {
      * @author 狐彻 2020/10/21 10:43
      */
     public class SimpleDialogHelper {
-        private AlertDialog.Builder builder;
+        private final AlertDialog.Builder builder;
 
         private SimpleDialogHelper() {
             builder = new AlertDialog.Builder(getContext());

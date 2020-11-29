@@ -28,7 +28,6 @@ public class ServiceTarget implements LauncherTarget {
     private boolean isBind;   //是否bind
 
     //下列为Bind参数
-    private Intent service;
     private int flags;
     private Executor executor;
     private ServiceConnection conn;
@@ -40,7 +39,7 @@ public class ServiceTarget implements LauncherTarget {
      * @param intent  目标Intent
      * @author 狐彻 2020/10/22 9:28
      */
-    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
+    @RestrictTo(RestrictTo.Scope.LIBRARY)
     public ServiceTarget(@NonNull Context context, @NonNull Intent intent) {
         ctx = context;
         this.intent = intent;
@@ -67,6 +66,7 @@ public class ServiceTarget implements LauncherTarget {
      */
     @RequiresApi(Build.VERSION_CODES.Q)
     public void setBind(int flags, @NonNull Executor executor, @NonNull ServiceConnection conn) {
+        isBind = true;
         this.flags = flags;
         this.executor = executor;
         this.conn = conn;
@@ -78,6 +78,7 @@ public class ServiceTarget implements LauncherTarget {
      * @author 狐彻 2020/10/22 9:59
      */
     public void setBind(int flags, @NonNull ServiceConnection conn) {
+        isBind = true;
         this.flags = flags;
         this.conn = conn;
     }

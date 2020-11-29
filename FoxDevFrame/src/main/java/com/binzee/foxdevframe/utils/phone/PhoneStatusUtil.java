@@ -1,7 +1,9 @@
 package com.binzee.foxdevframe.utils.phone;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.ActivityManager;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
@@ -11,6 +13,8 @@ import android.net.NetworkInfo;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Build;
+import android.provider.Settings;
+import android.telephony.TelephonyManager;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
@@ -20,10 +24,13 @@ import androidx.annotation.RequiresPermission;
 import com.binzee.foxdevframe.FoxCore;
 import com.binzee.foxdevframe.utils.LogUtil;
 
+import java.io.IOException;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
+import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.List;
 
 /**
  * 手机状态工具类
@@ -31,6 +38,7 @@ import java.util.Enumeration;
  * @author 狐彻
  * 2020/10/27 9:50
  */
+@SuppressWarnings("BooleanMethodIsAlwaysInverted")
 public class PhoneStatusUtil {
     private static final String TAG = "PhoneStatusUtil";
 
@@ -40,9 +48,10 @@ public class PhoneStatusUtil {
      * @author 狐彻 2020/10/27 9:54
      */
     public enum NetworkType {
-        NETWORK_NONE(0),    //无网络
-        NETWORK_DATA(1),    //数据网络
-        NETWORK_WIFI(2);    //wifi网络
+        NONE(0),    //无网络
+        DATA(1),    //数据网络
+//        NR5G(2),    //5G
+        WIFI(3);    //wifi网络
 
         // 值，int类型，方便对比
         // @author 狐彻 2020/10/27 9:53
@@ -69,6 +78,43 @@ public class PhoneStatusUtil {
     ///////////////////////////////////////////////////////////////////////////
     // 网络相关
     ///////////////////////////////////////////////////////////////////////////
+
+    /**
+     * 当前网络是否是流量计费
+     *
+     * @author 狐彻 2020/11/17 13:27
+     */
+    @RequiresPermission(Manifest.permission.ACCESS_NETWORK_STATE)
+    public boolean isNetworkNotMetered() {
+        if (!isNetworkAvailable() || !isNetWorkConnected()) return true;
+        ConnectivityManager manager = getConnectivityManager();
+        if (manager == null) return true;
+        Network network = manager.getActiveNetwork();
+        if (network == null) return true;
+        NetworkCapabilities capabilities = manager.getNetworkCapabilities(network);
+        boolean netNotMetered = capabilities
+                .hasCapability(NetworkCapabilities.NET_CAPABILITY_NOT_METERED);
+        boolean netTempNotMetered = false;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            netTempNotMetered = capabilities
+                    .hasCapability(NetworkCapabilities.NET_CAPABILITY_TEMPORARILY_NOT_METERED);
+        }
+        return netNotMetered || netTempNotMetered;
+    }
+
+    /**
+     * 判断手机是否连接到5G
+     *
+     * @author 狐彻 2020/11/17 13:35
+     */
+    @RequiresApi(api = Build.VERSION_CODES.Q)
+    @RequiresPermission(Manifest.permission.READ_PHONE_STATE)
+    public boolean is5GConnected() {
+        TelephonyManager manager = (TelephonyManager) FoxCore.getApplication()
+                .getSystemService(Context.TELEPHONY_SERVICE);
+        int networkType = manager.getNetworkType();
+        return networkType == TelephonyManager.NETWORK_TYPE_NR;
+    }
 
     /**
      * 获取网络状态
@@ -104,22 +150,23 @@ public class PhoneStatusUtil {
 
     /**
      * 获取网络状态
+     *
      * @author binze 2020/8/25 11:42
      */
     @RequiresPermission(android.Manifest.permission.ACCESS_NETWORK_STATE)
-    public NetworkType getNetworkState(){
-        if (!isNetworkAvailable() || !isNetWorkConnected()) return NetworkType.NETWORK_NONE;
+    public NetworkType getNetworkState() {
+        if (!isNetworkAvailable() || !isNetWorkConnected()) return NetworkType.NONE;
         ConnectivityManager manager = getConnectivityManager();
-        if (manager == null) return NetworkType.NETWORK_NONE;
+        if (manager == null) return NetworkType.NONE;
         Network network = manager.getActiveNetwork();
-        if (network == null) return NetworkType.NETWORK_NONE;
+        if (network == null) return NetworkType.NONE;
         NetworkCapabilities capabilities = manager.getNetworkCapabilities(network);
-        if (capabilities == null) return NetworkType.NETWORK_NONE;
+        if (capabilities == null) return NetworkType.NONE;
         if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR))
-            return NetworkType.NETWORK_DATA;   //移动网络
+            return NetworkType.DATA;   //移动网络
         if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI))
-            return NetworkType.NETWORK_WIFI;   //Wifi
-        return NetworkType.NETWORK_NONE;
+            return NetworkType.WIFI;   //Wifi
+        return NetworkType.NONE;
     }
 
     /**
@@ -133,7 +180,7 @@ public class PhoneStatusUtil {
         ConnectivityManager manager = getConnectivityManager();
         if (manager != null) {
             manager.registerDefaultNetworkCallback(callback);
-        } else LogUtil.e(TAG, "registerNetworkListener: 注册网络状态失败，没有网络连接" );
+        } else LogUtil.e(TAG, "registerNetworkListener: 注册网络状态失败，没有网络连接");
     }
 
     /**
@@ -145,7 +192,7 @@ public class PhoneStatusUtil {
         ConnectivityManager manager = getConnectivityManager();
         if (manager != null) {
             manager.unregisterNetworkCallback(callback);
-        } else LogUtil.e(TAG, "unregisterNetworkListener: 注销网络状态失败，没有网络连接" );
+        } else LogUtil.e(TAG, "unregisterNetworkListener: 注销网络状态失败，没有网络连接");
     }
 
     /**
@@ -156,9 +203,9 @@ public class PhoneStatusUtil {
     @RequiresPermission(android.Manifest.permission.ACCESS_NETWORK_STATE)
     public String getIPAddress() {
         NetworkType netState = getNetworkState();
-        if (netState == NetworkType.NETWORK_NONE) return null;
-        if (netState == NetworkType.NETWORK_DATA) return getDataIPAddress();
-        if (netState == NetworkType.NETWORK_WIFI) return getWifiIPAddress();
+        if (netState == NetworkType.NONE) return null;
+        if (netState == NetworkType.DATA) return getDataIPAddress();
+        if (netState == NetworkType.WIFI) return getWifiIPAddress();
         return null;
     }
 
@@ -202,6 +249,22 @@ public class PhoneStatusUtil {
                     .getSystemService(Context.INPUT_METHOD_SERVICE);
             if (imm != null) imm.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT);
         }
+    }
+
+    /**
+     * 判断手机是否root
+     *
+     * @author 狐彻 2020/11/17 14:22
+     */
+    public boolean isPhoneRooted() {
+        try {
+            String result = ADBTools.execute("su");
+            if (result.toLowerCase().contains("is already running as root"))
+                return true;
+        } catch (IOException e) {
+            LogUtil.v(TAG, "isPhoneRooted: ", e);
+        }
+        return false;
     }
 
     ///////////////////////////////////////////////////////////////////////////

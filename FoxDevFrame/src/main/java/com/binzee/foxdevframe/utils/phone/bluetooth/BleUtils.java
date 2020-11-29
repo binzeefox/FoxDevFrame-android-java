@@ -5,7 +5,6 @@ import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothManager;
-import android.bluetooth.le.ScanCallback;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -28,7 +27,7 @@ import com.binzee.foxdevframe.FoxCore;
  * @author 狐彻
  * 2020/11/10 8:40
  */
-public class BleHelper implements BleInterface {
+public class BleUtils implements BleInterface {
     private static final String TAG = "BleHelper";
 
     private final BluetoothManager mManager;
@@ -39,11 +38,11 @@ public class BleHelper implements BleInterface {
      *
      * @author 狐彻 2020/11/10 9:03
      */
-    public static BleHelper get() {
+    public static BleUtils get() {
         return Holder.instance;
     }
 
-    private BleHelper() {
+    private BleUtils() {
         if (!isSupportBle()) throw new RuntimeException("Ble not supported!!");
         mManager = (BluetoothManager) FoxCore.getApplication()
                 .getSystemService(Context.BLUETOOTH_SERVICE);
@@ -79,13 +78,18 @@ public class BleHelper implements BleInterface {
     }
 
     @Override
-    public BleScanner getScanner(ScanCallback callback) {
-        return new FoxBleScanner(mAdapter, callback);
+    public BleScanner getScanner() {
+        return new FoxBleScanner(mAdapter);
     }
 
     @Override
     public BleDevice getToolDevice(BluetoothDevice device) {
         return new FoxBleDevice(device);
+    }
+
+    @Override
+    public BleDevice getToolDeviceByMac(String mac) {
+        return getToolDevice(mAdapter.getRemoteDevice(mac));
     }
 
 
@@ -94,6 +98,6 @@ public class BleHelper implements BleInterface {
     ///////////////////////////////////////////////////////////////////////////
 
     private static class Holder {
-        private static final BleHelper instance = new BleHelper();
+        private static final BleUtils instance = new BleUtils();
     }
 }

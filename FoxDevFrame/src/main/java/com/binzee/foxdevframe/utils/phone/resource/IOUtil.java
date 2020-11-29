@@ -1,4 +1,4 @@
-package com.binzee.foxdevframe.utils;
+package com.binzee.foxdevframe.utils.phone.resource;
 
 import android.content.ContentResolver;
 import android.net.Uri;
@@ -6,6 +6,7 @@ import android.net.Uri;
 import androidx.annotation.NonNull;
 
 import com.binzee.foxdevframe.FoxCore;
+import com.binzee.foxdevframe.utils.LogUtil;
 
 import java.io.File;
 import java.io.FileInputStream;

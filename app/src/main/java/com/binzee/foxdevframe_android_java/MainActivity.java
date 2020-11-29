@@ -1,8 +1,15 @@
 package com.binzee.foxdevframe_android_java;
 
 import android.Manifest;
+import android.net.ConnectivityManager;
+import android.net.Network;
+import android.net.NetworkCapabilities;
 import android.os.Build;
+import android.util.Log;
 
+import androidx.annotation.NonNull;
+
+import com.binzee.foxdevframe.FoxCore;
 import com.binzee.foxdevframe.ui.FoxActivity;
 import com.binzee.foxdevframe.ui.tools.launcher.Launcher;
 import com.binzee.foxdevframe.ui.tools.popup.PopupHelper;
@@ -12,11 +19,15 @@ import com.binzee.foxdevframe.utils.ThreadUtils;
 import com.binzee.foxdevframe.utils.http.ClientInterface;
 import com.binzee.foxdevframe.utils.http.ClientUtil;
 import com.binzee.foxdevframe.utils.permission.PermissionUtil;
-import com.binzee.foxdevframe.utils.phone.bluetooth.BleHelper;
+import com.binzee.foxdevframe.utils.phone.ADBTools;
+import com.binzee.foxdevframe.utils.phone.PhoneStatusUtil;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 
 public class MainActivity extends FoxActivity {
     private static final String TAG = "MainActivity";
@@ -35,12 +46,6 @@ public class MainActivity extends FoxActivity {
 
         findViewById(R.id.confirm_button).setOnClickListener(v -> test());
 
-        TextTools.IDCardUtil util = TextTools.get("210682199403110018").getIDCardUtil();
-        String city = "身份证地址：" + util.getProvinceName();
-        String birthDay = " 出生日期：" + util.getBirthDay();
-        String gender = " 性别：" + (util.isMale() ? "男" : "女");
-        LogUtil.d(TAG, "onCreate: idcard  " + city + birthDay + gender);
-
         //设置二次返回键点击验证
         setBackPressTwiceCheck(new OnPressTwiceListener() {
             @Override
@@ -56,6 +61,7 @@ public class MainActivity extends FoxActivity {
     }
 
     private void test() {
+
 //        netWorkTest();
 //        permissionTest();
 //        systemSettingTest();
@@ -126,5 +132,9 @@ public class MainActivity extends FoxActivity {
 //                .showNFCSetting();
 //                .showInternetSetting();
         }
+    }
+
+    private void netWorkStateTest() {
+        LogUtil.d(TAG, "netWorkStateTest: isNetworkMetered " + PhoneStatusUtil.get().isNetworkNotMetered());
     }
 }

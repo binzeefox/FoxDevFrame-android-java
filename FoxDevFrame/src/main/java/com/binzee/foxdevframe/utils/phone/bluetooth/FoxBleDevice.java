@@ -31,6 +31,7 @@ class FoxBleDevice implements BleDevice {
     private final UUID ID_CCCD = UUID.fromString("00002902-0000-1000-8000-00805f9b34fb");
     private final BluetoothDevice mDevice;   //设备实例
 
+    private final int TRANSPORT = BluetoothDevice.TRANSPORT_AUTO;
     @RequiresApi(api = Build.VERSION_CODES.O)
     private final int PHY = BluetoothDevice.PHY_LE_1M_MASK;
     private boolean mAutoConnect = false;    //自动连接
@@ -63,7 +64,6 @@ class FoxBleDevice implements BleDevice {
         //回调
         mCallback = connectCallback;
         BluetoothGattCallback callback = new GattCallback();
-        int TRANSPORT = BluetoothDevice.TRANSPORT_AUTO;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             mDevice.connectGatt(FoxCore.getApplication()
                     , mAutoConnect, callback, TRANSPORT, PHY, mConnectHandler);
@@ -180,7 +180,7 @@ class FoxBleDevice implements BleDevice {
 
         @Override
         public void onCharacteristicChanged(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic) {
-            mCallback.onCharacteristicNotification(gatt, characteristic);
+            mCallback.onCharacteristicChanged(gatt, characteristic);
         }
     }
 }
