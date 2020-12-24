@@ -13,20 +13,19 @@ package com.binzee.foxdevframe.utils;
 // SingleThreadPool: 只有一个核心线程，确保所有任务都在统一线程按顺序执行
 
 
-import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 
 import androidx.annotation.NonNull;
 
-import java.io.Closeable;
-import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Thread工具
@@ -34,12 +33,12 @@ import java.util.concurrent.Executors;
  * @author 狐彻
  * 2020/10/27 9:15
  */
-public class ThreadUtils implements Closeable {
+public class ThreadUtils {
     private static ThreadUtils sInstance;   //单例
-    private volatile ExecutorService mIOExecutor;    //IO线程池
-    private volatile ExecutorService mComputationExecutor;   //计算线程池
-    private final Map<String, ExecutorService> mOtherExecutorsMap
-            = new ConcurrentHashMap<>();  //其它线程池
+    private ConcurrentUtil mIOUtil;    //IO线程池
+    private ConcurrentUtil mComputationUtil;   //计算线程池
+    private final Map<String, ConcurrentUtil> mOtherUtilMap
+            = new ConcurrentHashMap<>();  //其它线程池工具
 
     /**
      * 单例获取
@@ -67,19 +66,6 @@ public class ThreadUtils implements Closeable {
     }
 
 
-    @Override
-    public void close() throws IOException {
-        synchronized (ThreadUtils.class) {
-            shutdownExecutor(mIOExecutor);
-            shutdownExecutor(mComputationExecutor);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
-                mOtherExecutorsMap.values().forEach(this::shutdownExecutor);
-            else for (ExecutorService executor : mOtherExecutorsMap.values())
-                shutdownExecutor(executor);
-            sInstance = null;
-        }
-    }
-
     ///////////////////////////////////////////////////////////////////////////
     // 业务方法
     ///////////////////////////////////////////////////////////////////////////
@@ -90,8 +76,8 @@ public class ThreadUtils implements Closeable {
      * @author 狐彻 2020/10/27 9:45
      */
     public void executeIO(Runnable work) {
-        if (mIOExecutor == null) initIOExecutor();
-        mIOExecutor.execute(work);
+        if (mIOUtil == null) initIOExecutor();
+        mIOUtil.execute(work);
     }
 
     /**
@@ -99,17 +85,9 @@ public class ThreadUtils implements Closeable {
      *
      * @author 狐彻 2020/10/27 17:10
      */
-    public <T> void invokeIO(Callable<T> callable, OnFutureResultListener<T> listener) {
-        executeIO(() -> {
-            try {
-                T result = mIOExecutor.submit(callable).get();
-                listener.onResult(result);
-            } catch (ExecutionException | InterruptedException e) {
-                listener.onError(e);
-            } finally {
-                listener.onComplete();
-            }
-        });
+    public <T> void callIO(Callable<T> callable, ConcurrentUtil.FutureCallback<T> callback) {
+        if (mIOUtil == null) initIOExecutor();
+        mIOUtil.call(callable, callback);
     }
 
     /**
@@ -118,8 +96,8 @@ public class ThreadUtils implements Closeable {
      * @author 狐彻 2020/10/27 9:46
      */
     public void executeComputation(Runnable work) {
-        if (mComputationExecutor == null) initComputationExecutor();
-        mComputationExecutor.execute(work);
+        if (mComputationUtil == null) initComputationExecutor();
+        mComputationUtil.execute(work);
     }
 
     /**
@@ -127,17 +105,9 @@ public class ThreadUtils implements Closeable {
      *
      * @author 狐彻 2020/10/27 17:10
      */
-    public <T> void invokeComputation(Callable<T> callable, OnFutureResultListener<T> listener) {
-        executeComputation(() -> {
-            try {
-                T result = mComputationExecutor.submit(callable).get();
-                listener.onResult(result);
-            } catch (ExecutionException | InterruptedException e) {
-                listener.onError(e);
-            } finally {
-                listener.onComplete();
-            }
-        });
+    public <T> void callComputation(Callable<T> callable, ConcurrentUtil.FutureCallback<T> callback) {
+        if (mComputationUtil == null) initComputationExecutor();
+        mComputationUtil.call(callable, callback);
     }
 
 
@@ -147,9 +117,9 @@ public class ThreadUtils implements Closeable {
      * @param defaultExecutor 默认线程池，若tag下无线程池则使用该线程池。若为空则默认为CachedThreadPool
      * @author 狐彻 2020/10/27 9:47
      */
-    public void executeOther(String tag, Runnable runnable, ExecutorService defaultExecutor) {
-        ExecutorService service = getOtherExecutor(tag, defaultExecutor);
-        service.execute(runnable);
+    public void executeOther(@NonNull String tag, Runnable runnable, ExecutorService defaultExecutor) {
+        ConcurrentUtil util = getOtherExecutor(tag, defaultExecutor);
+        util.execute(runnable);
     }
 
     /**
@@ -157,8 +127,68 @@ public class ThreadUtils implements Closeable {
      *
      * @author 狐彻 2020/10/27 9:47
      */
-    public void executeOther(String tag, Runnable runnable) {
+    public void executeOther(@NonNull String tag, Runnable runnable) {
         executeOther(tag, runnable, null);
+    }
+
+    /**
+     * 新线程池请求
+     *
+     * @author tong.xw 2020/12/24 16:07
+     */
+    public <T> void callOther(@NonNull String tag, Callable<T> callable, ExecutorService defaultExecutor
+            , ConcurrentUtil.FutureCallback<T> callback) {
+        ConcurrentUtil util = getOtherExecutor(tag, defaultExecutor);
+        util.call(callable, callback);
+    }
+
+    /**
+     * 新线程池请求
+     *
+     * @author tong.xw 2020/12/24 16:07
+     */
+    public <T> void callOther(@NonNull String tag, Callable<T> callable, ConcurrentUtil.FutureCallback<T> callback) {
+        callOther(tag, callable, null, callback);
+    }
+
+    /**
+     * 关闭线程池
+     *
+     * @author 狐彻 2020/10/27 9:32
+     */
+    public void shutdownExecutor(@NonNull String tag) {
+        ConcurrentUtil util = mOtherUtilMap.get(tag);
+        if (util == null) return;
+        util.shutdown();
+        mOtherUtilMap.remove(tag);
+    }
+
+    /**
+     * 立即关闭线程池
+     *
+     * @author tong.xw 2020/12/24 16:16
+     */
+    public void shutdownExecutorNow(@NonNull String tag) {
+        ConcurrentUtil util = mOtherUtilMap.get(tag);
+        if (util == null) return;
+        util.shutdownNow();
+        mOtherUtilMap.remove(tag);
+    }
+
+    /**
+     * 立即回收所有任务
+     *
+     * @author tong.xw 2020/12/24 16:18
+     */
+    public void shutdownAllNow() {
+        for (ConcurrentUtil util: mOtherUtilMap.values()) {
+            util.shutdownNow();
+        }
+        mOtherUtilMap.clear();
+        mIOUtil.shutdownNow();
+        mComputationUtil.shutdownNow();
+        mIOUtil = null;
+        mComputationUtil = null;
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -171,7 +201,9 @@ public class ThreadUtils implements Closeable {
      * @author 狐彻 2020/10/27 9:36
      */
     protected void initIOExecutor() {
-        mIOExecutor = Executors.newCachedThreadPool();  //选用只有非核心线程的线程池
+        ExecutorService service = new ThreadPoolExecutor(1, Integer.MAX_VALUE
+                , 1, TimeUnit.SECONDS, new LinkedBlockingQueue<>());  //一个常驻线程，无限个缓存线程
+        mIOUtil = new ConcurrentUtil(service);
     }
 
     /**
@@ -180,7 +212,8 @@ public class ThreadUtils implements Closeable {
      * @author 狐彻 2020/10/27 9:36
      */
     protected void initComputationExecutor() {
-        mComputationExecutor = Executors.newCachedThreadPool();  //选用只有非核心线程的线程池
+        ExecutorService service = Executors.newCachedThreadPool();  //缓存线程池
+        mComputationUtil = new ConcurrentUtil(service);
     }
 
     /**
@@ -191,23 +224,13 @@ public class ThreadUtils implements Closeable {
      * @author 狐彻 2020/10/27 9:41
      */
     @NonNull
-    protected ExecutorService getOtherExecutor(String tag, ExecutorService defaultExecutor) {
-        ExecutorService executor = mOtherExecutorsMap.get(tag);
-        if (executor != null) return executor;
-        if (defaultExecutor == null) executor = Executors.newCachedThreadPool();
-        else executor = defaultExecutor;
-        mOtherExecutorsMap.put(tag, executor);
-        return executor;
-    }
-
-    /**
-     * 关闭线程池
-     *
-     * @author 狐彻 2020/10/27 9:32
-     */
-    private void shutdownExecutor(ExecutorService executor) {
-        if (executor != null && !executor.isShutdown())
-            executor.shutdownNow();
+    protected ConcurrentUtil getOtherExecutor(String tag, ExecutorService defaultExecutor) {
+        ConcurrentUtil util = mOtherUtilMap.get(tag);
+        if (util != null) return util;
+        if (defaultExecutor == null) util = new ConcurrentUtil(Executors.newCachedThreadPool());
+        else util = new ConcurrentUtil(defaultExecutor);
+        mOtherUtilMap.put(tag, util);
+        return util;
     }
 
     ///////////////////////////////////////////////////////////////////////////

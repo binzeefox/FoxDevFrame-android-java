@@ -1,18 +1,15 @@
 package com.binzee.foxdevframe.utils.http;
 
 import com.binzee.foxdevframe.utils.LogUtil;
-import com.binzee.foxdevframe.utils.ThreadUtils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
-import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Map;
-import java.util.concurrent.Callable;
+
 
 /**
  * 网络工具类
