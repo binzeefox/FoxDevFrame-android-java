@@ -1,33 +1,23 @@
 package com.binzee.foxdevframe_android_java;
 
 import android.Manifest;
-import android.net.ConnectivityManager;
-import android.net.Network;
-import android.net.NetworkCapabilities;
 import android.os.Build;
-import android.util.Log;
 
-import androidx.annotation.NonNull;
-
-import com.binzee.foxdevframe.FoxCore;
 import com.binzee.foxdevframe.ui.FoxActivity;
 import com.binzee.foxdevframe.ui.tools.launcher.Launcher;
-import com.binzee.foxdevframe.ui.tools.popup.PopupHelper;
+import com.binzee.foxdevframe.ui.tools.popup.ToastHelper;
+import com.binzee.foxdevframe.ui.tools.popup.dialog.LoadingDialogHelper;
+import com.binzee.foxdevframe.ui.tools.popup.dialog.SystemDialogHelper;
 import com.binzee.foxdevframe.utils.LogUtil;
-import com.binzee.foxdevframe.utils.TextTools;
 import com.binzee.foxdevframe.utils.ThreadUtils;
 import com.binzee.foxdevframe.utils.http.ClientInterface;
 import com.binzee.foxdevframe.utils.http.ClientUtil;
 import com.binzee.foxdevframe.utils.permission.PermissionUtil;
-import com.binzee.foxdevframe.utils.phone.ADBTools;
 import com.binzee.foxdevframe.utils.phone.PhoneStatusUtil;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 
 public class MainActivity extends FoxActivity {
     private static final String TAG = "MainActivity";
@@ -50,7 +40,9 @@ public class MainActivity extends FoxActivity {
         setBackPressTwiceCheck(new OnPressTwiceListener() {
             @Override
             public void onFirstPress() {
-                toast("两秒内第二次点击返回键返回");
+                LoadingDialogHelper helper = new LoadingDialogHelper(MainActivity.this);
+                if (helper.isShowing()) helper.dismiss();
+                else helper.show();
             }
 
             @Override
@@ -61,7 +53,9 @@ public class MainActivity extends FoxActivity {
     }
 
     private void test() {
-
+        LoadingDialogHelper helper = new LoadingDialogHelper(MainActivity.this);
+        if (helper.isShowing()) helper.dismiss();
+        else helper.show();
 //        netWorkTest();
 //        permissionTest();
 //        systemSettingTest();
@@ -126,8 +120,8 @@ public class MainActivity extends FoxActivity {
 
     private void systemSettingPopupTest() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            PopupHelper.systemPopup()
-                    .showWifiSetting();
+            SystemDialogHelper helper = new SystemDialogHelper();
+            helper.showWifiSetting();
 //                .showVolumeSetting();
 //                .showNFCSetting();
 //                .showInternetSetting();

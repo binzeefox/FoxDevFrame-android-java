@@ -18,7 +18,7 @@ public class CustomDialogFragment extends DialogFragment {
     private static final String TAG = "CustomDialogFragment";
     private final Dialog mDialog;
 
-    public CustomDialogFragment(Dialog dialog) {
+    public CustomDialogFragment(@NonNull Dialog dialog) {
         mDialog = dialog;
     }
 
@@ -28,7 +28,7 @@ public class CustomDialogFragment extends DialogFragment {
         return mDialog;
     }
 
-    @Nullable
+    @NonNull
     @Override
     public Dialog getDialog() {
         return mDialog;

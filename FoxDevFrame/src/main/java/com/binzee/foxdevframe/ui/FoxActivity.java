@@ -5,9 +5,6 @@ import android.app.Application;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
-import android.os.Message;
 import android.os.PersistableBundle;
 import android.view.View;
 import android.view.Window;
@@ -18,11 +15,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.binzee.foxdevframe.ui.tools.popup.PopupHelper;
+import com.binzee.foxdevframe.ui.tools.popup.ToastHelper;
 import com.binzee.foxdevframe.utils.LogUtil;
-
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * Activity基类
@@ -52,10 +46,10 @@ public abstract class FoxActivity extends AppCompatActivity implements UiInterfa
         onCreate();
     }
 
-    @Override
-    public void toast(CharSequence text) {
-        PopupHelper.get().showToast(text, Toast.LENGTH_SHORT);
-    }
+//    @Override
+//    public void toast(CharSequence text) {
+//        ToastHelper.get().showToast(text, Toast.LENGTH_SHORT);
+//    }
 
     @Override
     public Context getContext() {

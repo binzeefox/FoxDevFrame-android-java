@@ -9,7 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import com.binzee.foxdevframe.FoxCore;
-import com.binzee.foxdevframe.ui.tools.popup.PopupHelper;
+import com.binzee.foxdevframe.ui.tools.popup.ToastHelper;
 
 /**
  * 碎片基类
@@ -19,10 +19,10 @@ import com.binzee.foxdevframe.ui.tools.popup.PopupHelper;
  */
 public abstract class FoxFragment extends Fragment implements UiInterface {
 
-    @Override
-    public void toast(CharSequence text) {
-        PopupHelper.get().showToast(text, Toast.LENGTH_SHORT);
-    }
+//    @Override
+//    public void toast(CharSequence text) {
+//        ToastHelper.get().showToast(text, Toast.LENGTH_SHORT);
+//    }
 
 
 //    @Override

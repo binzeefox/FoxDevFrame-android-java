@@ -1,4 +1,4 @@
-package com.binzee.foxdevframe.ui.tools.popup;
+package com.binzee.foxdevframe.ui.tools.popup.dialog;
 
 import android.content.Context;
 import android.content.Intent;
@@ -15,10 +15,10 @@ import com.binzee.foxdevframe.FoxCore;
  * @author 狐彻
  * 2020/10/27 9:01
  */
-public class SystemShortcutPopup {
+public class SystemDialogHelper {
     private final Context mCtx;
 
-    SystemShortcutPopup(){
+    public SystemDialogHelper(){
         mCtx = FoxCore.getApplication();
     }
 

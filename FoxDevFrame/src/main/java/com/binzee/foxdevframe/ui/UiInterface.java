@@ -15,12 +15,12 @@ import java.util.List;
  */
 public interface UiInterface {
 
-    /**
-     * 提示框
-     *
-     * @author 狐彻 2020/10/21 9:44
-     */
-    void toast(CharSequence text);
+//    /**
+//     * 提示框
+//     *
+//     * @author 狐彻 2020/10/21 9:44
+//     */
+//    void toast(CharSequence text);
 
 //    /**
 //     * 跳转
