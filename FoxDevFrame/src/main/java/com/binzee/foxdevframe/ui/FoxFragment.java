@@ -3,13 +3,11 @@ package com.binzee.foxdevframe.ui;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import com.binzee.foxdevframe.FoxCore;
-import com.binzee.foxdevframe.ui.tools.popup.ToastHelper;
 
 /**
  * 碎片基类

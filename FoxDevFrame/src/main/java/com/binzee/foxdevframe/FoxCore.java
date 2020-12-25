@@ -17,7 +17,7 @@ import androidx.annotation.Nullable;
 
 import com.binzee.foxdevframe.ui.FoxActivity;
 import com.binzee.foxdevframe.utils.LogUtil;
-import com.binzee.foxdevframe.utils.phone.resource.SharedPreferenceUtil;
+import com.binzee.foxdevframe.utils.device.resource.SharedPreferenceUtil;
 
 import java.util.Locale;
 import java.util.Stack;

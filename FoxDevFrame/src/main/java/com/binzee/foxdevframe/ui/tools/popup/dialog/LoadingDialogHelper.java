@@ -1,6 +1,5 @@
 package com.binzee.foxdevframe.ui.tools.popup.dialog;
 
-import android.app.Dialog;
 import android.content.Context;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
@@ -17,7 +16,7 @@ import androidx.fragment.app.FragmentManager;
 
 import com.binzee.foxdevframe.R;
 import com.binzee.foxdevframe.ui.views.CustomDialogFragment;
-import com.binzee.foxdevframe.utils.phone.resource.DimenUtil;
+import com.binzee.foxdevframe.utils.device.resource.DimenUtil;
 
 /**
  * 加载框助手

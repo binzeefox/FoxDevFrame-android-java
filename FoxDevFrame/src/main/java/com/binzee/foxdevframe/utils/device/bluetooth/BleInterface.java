@@ -1,4 +1,4 @@
-package com.binzee.foxdevframe.utils.phone.bluetooth;
+package com.binzee.foxdevframe.utils.device.bluetooth;
 
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;

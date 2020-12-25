@@ -1,4 +1,4 @@
-package com.binzee.foxdevframe.utils.phone;
+package com.binzee.foxdevframe.utils.device;
 
 import android.app.Activity;
 import android.content.Context;

@@ -1,9 +1,8 @@
-package com.binzee.foxdevframe.utils.phone;
+package com.binzee.foxdevframe.utils.device;
 
 import android.Manifest;
 import android.app.Activity;
 import android.app.ActivityManager;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
@@ -13,7 +12,6 @@ import android.net.NetworkInfo;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Build;
-import android.provider.Settings;
 import android.telephony.TelephonyManager;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -28,9 +26,7 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
-import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.List;
 
 /**
  * 手机状态工具类
@@ -39,8 +35,8 @@ import java.util.List;
  * 2020/10/27 9:50
  */
 @SuppressWarnings("BooleanMethodIsAlwaysInverted")
-public class PhoneStatusUtil {
-    private static final String TAG = "PhoneStatusUtil";
+public class DeviceStatusUtil {
+    private static final String TAG = "DeviceStatusUtil";
 
     /**
      * 网络状态枚举
@@ -71,8 +67,8 @@ public class PhoneStatusUtil {
      *
      * @author 狐彻 2020/10/27 9:55
      */
-    public static PhoneStatusUtil get() {
-        return new PhoneStatusUtil();
+    public static DeviceStatusUtil get() {
+        return new DeviceStatusUtil();
     }
 
     ///////////////////////////////////////////////////////////////////////////

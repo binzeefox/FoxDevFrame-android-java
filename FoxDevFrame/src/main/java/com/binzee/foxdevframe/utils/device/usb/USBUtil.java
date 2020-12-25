@@ -1,4 +1,4 @@
-package com.binzee.foxdevframe.utils.phone.usb;
+package com.binzee.foxdevframe.utils.device.usb;
 
 import android.content.Context;
 import android.hardware.usb.UsbDevice;
@@ -6,7 +6,6 @@ import android.hardware.usb.UsbManager;
 
 import com.binzee.foxdevframe.FoxCore;
 
-import java.util.List;
 import java.util.Map;
 
 /**

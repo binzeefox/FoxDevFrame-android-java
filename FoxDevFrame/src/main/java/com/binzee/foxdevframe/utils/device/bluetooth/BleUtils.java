@@ -1,4 +1,4 @@
-package com.binzee.foxdevframe.utils.phone.bluetooth;
+package com.binzee.foxdevframe.utils.device.bluetooth;
 
 import android.Manifest;
 import android.app.Activity;
@@ -23,7 +23,7 @@ import com.binzee.foxdevframe.FoxCore;
  * 扫描需要权限：
  * Manifest.permission.ACCESS_COARSE_LOCATION
  *
- * @see com.binzee.foxdevframe.utils.phone.bluetooth.BleInterface
+ * @see com.binzee.foxdevframe.utils.device.bluetooth.BleInterface
  * @author 狐彻
  * 2020/11/10 8:40
  */

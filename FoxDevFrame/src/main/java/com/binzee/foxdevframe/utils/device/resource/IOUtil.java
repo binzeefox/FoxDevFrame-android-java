@@ -1,4 +1,4 @@
-package com.binzee.foxdevframe.utils.phone.resource;
+package com.binzee.foxdevframe.utils.device.resource;
 
 import android.content.ContentResolver;
 import android.net.Uri;

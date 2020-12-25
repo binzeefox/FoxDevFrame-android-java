@@ -7,9 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 
-import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.StyleRes;
 import androidx.appcompat.app.AlertDialog;
@@ -21,7 +19,6 @@ import androidx.fragment.app.FragmentManager;
 import com.binzee.foxdevframe.R;
 import com.binzee.foxdevframe.ui.views.AutoAdjustImageView;
 import com.binzee.foxdevframe.ui.views.CustomDialogFragment;
-import com.binzee.foxdevframe.utils.phone.resource.DimenUtil;
 
 /**
  * 图片弹窗助手

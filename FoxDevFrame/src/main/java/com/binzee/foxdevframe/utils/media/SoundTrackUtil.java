@@ -25,17 +25,19 @@ import java.util.List;
 @SuppressWarnings("UnusedReturnValue")
 public class SoundTrackUtil {
     private static final String TAG = "SoundTrackUtil";
-    private SoundPool mPool;
+    @NonNull
+    private final SoundPool mPool;
     private final AudioManager mManager;
 
     private final SparseIntArray mIdArray = new SparseIntArray();   //存放流ID
-    private int currentStreamId = 0;    //当前播放流
+    private final SparseIntArray mStreamArray = new SparseIntArray();   //存放流ID
 
     /**
      * 私有化构造器
      */
-    private SoundTrackUtil() {
+    private SoundTrackUtil(@NonNull SoundPool pool) {
         mManager = (AudioManager) FoxCore.getApplication().getSystemService(Context.AUDIO_SERVICE);
+        mPool = pool;
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -47,8 +49,8 @@ public class SoundTrackUtil {
      *
      * @param pool 提供声音池
      */
-    public static void init(@NonNull SoundPool pool) {
-        get().mPool = pool;
+    public static SoundTrackUtil create(@NonNull SoundPool pool) {
+        return new SoundTrackUtil(pool);
     }
 
     /**
@@ -57,11 +59,11 @@ public class SoundTrackUtil {
      * @param attributes 参数
      * @param maxStreams 最大音流数
      */
-    public static void init(@Nullable AudioAttributes attributes, int maxStreams) {
+    public static SoundTrackUtil create(@Nullable AudioAttributes attributes, int maxStreams) {
         SoundPool.Builder builder = new SoundPool.Builder()
                 .setMaxStreams(maxStreams);
         if (attributes != null) builder.setAudioAttributes(attributes);
-        get().mPool = builder.build();
+        return new SoundTrackUtil(builder.build());
     }
 
     /**
@@ -69,8 +71,8 @@ public class SoundTrackUtil {
      *
      * @param maxStreams 最大音流数
      */
-    public static void init(int maxStreams) {
-        init(null, maxStreams);
+    public static SoundTrackUtil create(int maxStreams) {
+        return create(null, maxStreams);
     }
 
     /**
@@ -80,71 +82,13 @@ public class SoundTrackUtil {
      *
      * @param attributes 参数
      */
-    public static void init(@NonNull AudioAttributes attributes) {
-        init(attributes, 1);
+    public static SoundTrackUtil create(@NonNull AudioAttributes attributes) {
+        return create(attributes, 1);
     }
+
 
     ///////////////////////////////////////////////////////////////////////////
-    // 静态方法
-    ///////////////////////////////////////////////////////////////////////////
-
-    /**
-     * 静态获取
-     */
-    public static SoundTrackUtil get() {
-        return Holder.sInstance;
-    }
-
-    /**
-     * 静态播放方法，快捷调用，快乐开发
-     *
-     * @param loadedRawId 注册过的RawId
-     * @see SoundTrackUtil#play(int)
-     */
-    public static void sPlay(@RawRes int loadedRawId) {
-        get().play(loadedRawId);
-    }
-
-    /**
-     * 静态播放方法，快捷调用，快乐开发
-     *
-     * @param loadedRawId 注册过的RawId
-     * @param loop        若0为不循环，-1为无限循环，其它数值为循环次数（播放次数等于循环次数+1）
-     * @see SoundTrackUtil#play(int, int)
-     */
-    public static void sPlay(@RawRes int loadedRawId, int loop) {
-        get().play(loadedRawId);
-    }
-
-    /**
-     * 静态静音方法
-     *
-     * @see SoundTrackUtil#silence()
-     */
-    public static void sSilence() {
-        get().silence();
-    }
-
-    /**
-     * 静态暂停方法
-     *
-     * @see SoundTrackUtil#pause()
-     */
-    public static void sPause() {
-        get().silence();
-    }
-
-    /**
-     * 静态恢复播放方法
-     *
-     * @see SoundTrackUtil#resume()
-     */
-    public static void sResume() {
-        get().resume();
-    }
-
-    ///////////////////////////////////////////////////////////////////////////
-    // 非静态
+    // 业务方法
     ///////////////////////////////////////////////////////////////////////////
 
     /**
@@ -172,9 +116,48 @@ public class SoundTrackUtil {
      * @param loop    若0为不循环，-1为无限循环，其它数值为循环次数（播放次数等于循环次数+1）
      */
     public void play(@RawRes int soundId, int loop) {
-        if (currentStreamId != 0) getSoundPool().stop(currentStreamId);
-        float volRatio = getVolumeRatio();
-        currentStreamId = getSoundPool().play(mIdArray.get(soundId), volRatio, volRatio, 0, loop, 1);
+        synchronized (mStreamArray) {
+            float volRatio = getVolumeRatio();
+            int streamId = getSoundPool().play(mIdArray.get(soundId), volRatio, volRatio, 0, loop, 1);
+            mStreamArray.put(soundId, streamId);
+        }
+    }
+
+    /**
+     * 停止播放声音
+     */
+    public void silence() {
+        synchronized (mStreamArray) {
+            for (int i = 0; i < mStreamArray.size(); i++) {
+                int streamId = mStreamArray.valueAt(i);
+                mPool.stop(streamId);
+            }
+            mStreamArray.clear();
+        }
+    }
+
+    /**
+     * 暂停全部
+     */
+    public void pauseAll() {
+        synchronized (mStreamArray) {
+            for (int i = 0; i < mStreamArray.size(); i++) {
+                int streamId = mStreamArray.valueAt(i);
+                mPool.pause(streamId);
+            }
+        }
+    }
+
+    /**
+     * 恢复全部
+     */
+    public void resumeAll() {
+        synchronized (mStreamArray) {
+            for (int i = 0; i < mStreamArray.size(); i++) {
+                int streamId = mStreamArray.valueAt(i);
+                mPool.resume(streamId);
+            }
+        }
     }
 
     /**
@@ -187,34 +170,49 @@ public class SoundTrackUtil {
     }
 
     /**
-     * 停止播放声音
-     */
-    public void silence() {
-        if (currentStreamId != 0) getSoundPool().stop(currentStreamId);
-        currentStreamId = 0;
-    }
-
-    /**
      * 暂停播放
      */
-    public void pause() {
-        if (currentStreamId == 0) return;
-        getSoundPool().pause(currentStreamId);
+    public void pause(@RawRes int soundId) {
+        synchronized (mStreamArray) {
+            int streamId = mStreamArray.get(soundId, 0);
+            if (streamId != 0) {
+                mPool.pause(streamId);
+            }
+        }
     }
 
     /**
      * 恢复播放
      */
-    public void resume() {
-        if (currentStreamId == 0) return;
-        getSoundPool().resume(currentStreamId);
+    public void resume(@RawRes int soundId) {
+        synchronized (mStreamArray) {
+            int streamId = mStreamArray.get(soundId, 0);
+            if (streamId != 0) {
+                mPool.resume(streamId);
+            }
+        }
+    }
+
+    /**
+     * 停止播放
+     */
+    public void stop(@RawRes int soundId) {
+        synchronized (mStreamArray) {
+            int streamId = mStreamArray.get(soundId, 0);
+            if (streamId != 0) {
+                mPool.stop(streamId);
+                mStreamArray.removeAt(mStreamArray.indexOfKey(soundId));
+            }
+        }
     }
 
     /**
      * 当前是否有声音流
      */
     public boolean isInStream() {
-        return currentStreamId != 0;
+        synchronized (mStreamArray) {
+            return mStreamArray.size() != 0;
+        }
     }
 
     /**
@@ -232,7 +230,6 @@ public class SoundTrackUtil {
      * 获取音轨
      */
     private SoundPool getSoundPool() {
-        if (mPool == null) throw new UnInitialException();
         return mPool;
     }
 
@@ -246,19 +243,5 @@ public class SoundTrackUtil {
         float audioCurrentVolume = mManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
         //最终影响音量
         return Math.max(audioCurrentVolume / audioMaxVolume, 0.6f);
-    }
-
-    ///////////////////////////////////////////////////////////////////////////
-    // 内部类
-    ///////////////////////////////////////////////////////////////////////////
-
-    private static class UnInitialException extends RuntimeException {
-        UnInitialException() {
-            super("尚未初始化");
-        }
-    }
-
-    private static final class Holder {
-        private static final SoundTrackUtil sInstance = new SoundTrackUtil();
     }
 }

@@ -1,10 +1,9 @@
-package com.binzee.foxdevframe.utils.phone.bluetooth;
+package com.binzee.foxdevframe.utils.device.bluetooth;
 
 import android.Manifest;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.le.ScanCallback;
 import android.bluetooth.le.ScanFilter;
-import android.bluetooth.le.ScanResult;
 import android.bluetooth.le.ScanSettings;
 import android.os.Handler;
 

@@ -1,4 +1,4 @@
-package com.binzee.foxdevframe.utils.phone.sensors;
+package com.binzee.foxdevframe.utils.device.sensors;
 
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;

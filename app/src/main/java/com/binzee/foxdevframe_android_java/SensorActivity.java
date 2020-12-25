@@ -4,9 +4,9 @@ import android.hardware.SensorManager;
 
 import com.binzee.foxdevframe.ui.FoxActivity;
 import com.binzee.foxdevframe.utils.LogUtil;
-import com.binzee.foxdevframe.utils.phone.sensors.SensorDevice;
-import com.binzee.foxdevframe.utils.phone.sensors.SensorListener;
-import com.binzee.foxdevframe.utils.phone.sensors.SensorUtil;
+import com.binzee.foxdevframe.utils.device.sensors.SensorDevice;
+import com.binzee.foxdevframe.utils.device.sensors.SensorListener;
+import com.binzee.foxdevframe.utils.device.sensors.SensorUtil;
 
 /**
  * 测试传感器工具类的Activity

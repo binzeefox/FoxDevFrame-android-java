@@ -18,48 +18,57 @@ import com.binzee.foxdevframe.FoxCore;
  * 2020/10/21 9:43
  */
 @SuppressLint("ShowToast")
-public class ToastHelper {
+public class ToastUtil {
     private static final String TAG = "ToastHelper";
     private Toast mToast;   //Toast实例
 
     // 私有化构造器
     // @author 狐彻 2020/10/21 9:56
-    private ToastHelper() {
+    private ToastUtil() {
         //private constructor
     }
+
+    public static Operation toast(CharSequence text, int duration) {
+        Toast toast = Toast.makeText(get().getContext(), text, duration);
+        return toast(toast);
+    }
+
+    public static Operation toast(@StringRes int strId, int duration) {
+        Toast toast = Toast.makeText(get().getContext(), strId, duration);
+        return toast(toast);
+    }
+
+    /**
+     * 自定义toast
+     *
+     * @author tong.xw 2020/12/25 14:22
+     */
+    public static Operation toast(@NonNull Toast toast) {
+        return get().createOperation(toast);
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+    // 私有方法
+    ///////////////////////////////////////////////////////////////////////////
+
 
     /**
      * 静态获取
      *
      * @author 狐彻 2020/10/27 9:03
      */
-    public static ToastHelper get() {
+    private static ToastUtil get() {
         return PopupHelperHolder.instance;
     }
 
     /**
-     * 显示提示
+     * 创建操作
      *
-     * @author 狐彻 2020/10/21 10:10
+     * @author tong.xw 2020/12/25 14:23
      */
-    public Operation toast(CharSequence text, int duration) {
-        Toast toast = Toast.makeText(getContext(), text, duration);
+    private Operation createOperation(@NonNull Toast toast) {
         return new Operation(toast);
     }
-
-    /**
-     * 立即显示提示
-     *
-     * @author 狐彻 2020/10/21 10:09
-     */
-    public Operation toast(@StringRes int strId, int duration) {
-        Toast toast = Toast.makeText(getContext(), strId, duration);
-        return new Operation(toast);
-    }
-
-    ///////////////////////////////////////////////////////////////////////////
-    // 私有方法
-    ///////////////////////////////////////////////////////////////////////////
 
     /**
      * 获取上下文实例
@@ -144,6 +153,6 @@ public class ToastHelper {
      * @author tong.xw 2020/12/25 11:27
      */
     private static class PopupHelperHolder {
-        private static final ToastHelper instance = new ToastHelper();
+        private static final ToastUtil instance = new ToastUtil();
     }
 }

@@ -1,19 +1,20 @@
 package com.binzee.foxdevframe_android_java;
 
 import android.Manifest;
+import android.hardware.camera2.CameraDevice;
 import android.os.Build;
+import android.widget.Toast;
 
 import com.binzee.foxdevframe.ui.FoxActivity;
 import com.binzee.foxdevframe.ui.tools.launcher.Launcher;
-import com.binzee.foxdevframe.ui.tools.popup.ToastHelper;
-import com.binzee.foxdevframe.ui.tools.popup.dialog.LoadingDialogHelper;
+import com.binzee.foxdevframe.ui.tools.popup.ToastUtil;
 import com.binzee.foxdevframe.ui.tools.popup.dialog.SystemDialogHelper;
 import com.binzee.foxdevframe.utils.LogUtil;
 import com.binzee.foxdevframe.utils.ThreadUtils;
 import com.binzee.foxdevframe.utils.http.ClientInterface;
 import com.binzee.foxdevframe.utils.http.ClientUtil;
 import com.binzee.foxdevframe.utils.permission.PermissionUtil;
-import com.binzee.foxdevframe.utils.phone.PhoneStatusUtil;
+import com.binzee.foxdevframe.utils.device.DeviceStatusUtil;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -40,9 +41,7 @@ public class MainActivity extends FoxActivity {
         setBackPressTwiceCheck(new OnPressTwiceListener() {
             @Override
             public void onFirstPress() {
-                LoadingDialogHelper helper = new LoadingDialogHelper(MainActivity.this);
-                if (helper.isShowing()) helper.dismiss();
-                else helper.show();
+                ToastUtil.toast("再次点击关闭", Toast.LENGTH_LONG);
             }
 
             @Override
@@ -53,17 +52,7 @@ public class MainActivity extends FoxActivity {
     }
 
     private void test() {
-        LoadingDialogHelper helper = new LoadingDialogHelper(MainActivity.this);
-        if (helper.isShowing()) helper.dismiss();
-        else helper.show();
-//        netWorkTest();
-//        permissionTest();
-//        systemSettingTest();
-//        systemSettingPopupTest();
-//        ThreadUtils.get().executeIO(() -> {
-//            throw new RuntimeException("这是一个子线程内运行时异常");
-//        });
-//        throw new RuntimeException("这是一个运行时异常");
+
     }
 
     private void netWorkTest() {
@@ -129,6 +118,6 @@ public class MainActivity extends FoxActivity {
     }
 
     private void netWorkStateTest() {
-        LogUtil.d(TAG, "netWorkStateTest: isNetworkMetered " + PhoneStatusUtil.get().isNetworkNotMetered());
+        LogUtil.d(TAG, "netWorkStateTest: isNetworkMetered " + DeviceStatusUtil.get().isNetworkNotMetered());
     }
 }

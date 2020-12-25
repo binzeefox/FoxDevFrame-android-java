@@ -1,4 +1,4 @@
-package com.binzee.foxdevframe.utils.phone.sensors;
+package com.binzee.foxdevframe.utils.device.sensors;
 
 import android.content.Context;
 import android.hardware.Sensor;
@@ -8,7 +8,6 @@ import android.util.SparseArray;
 import com.binzee.foxdevframe.FoxCore;
 
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.Map;
 
 /**

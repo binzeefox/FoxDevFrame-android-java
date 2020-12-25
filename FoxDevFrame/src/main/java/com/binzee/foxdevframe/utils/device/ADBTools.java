@@ -1,4 +1,4 @@
-package com.binzee.foxdevframe.utils.phone;
+package com.binzee.foxdevframe.utils.device;
 
 import androidx.annotation.NonNull;
 
