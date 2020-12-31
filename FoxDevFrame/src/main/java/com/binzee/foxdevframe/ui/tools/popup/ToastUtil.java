@@ -103,7 +103,7 @@ public class ToastUtil {
          *
          * @author tong.xw 2020/12/25 11:26
          */
-        void showOnLastHide() {
+        public void showOnLastHide() {
             if (mToast == null) {
                 mToast = toast;
                 mToast.show();
@@ -126,7 +126,7 @@ public class ToastUtil {
          *
          * @author tong.xw 2020/12/25 11:26
          */
-        void showNow() {
+        public void showNow() {
             if (mToast == null) {
                 mToast = toast;
                 mToast.show();

@@ -23,6 +23,7 @@ import com.binzee.foxdevframe.FoxCore;
 import com.binzee.foxdevframe.utils.LogUtil;
 
 import java.io.IOException;
+import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
@@ -203,6 +204,22 @@ public class DeviceStatusUtil {
         if (netState == NetworkType.DATA) return getDataIPAddress();
         if (netState == NetworkType.WIFI) return getWifiIPAddress();
         return null;
+    }
+
+    /**
+     * 获取内网IP地址
+     */
+    public String getLocalIPAddress() throws SocketException {
+        for(Enumeration<NetworkInterface> en = NetworkInterface.getNetworkInterfaces(); en.hasMoreElements();){
+            NetworkInterface intf = en.nextElement();
+            for(Enumeration<InetAddress> enumIpAddr = intf.getInetAddresses(); enumIpAddr.hasMoreElements();){
+                InetAddress inetAddress = enumIpAddr.nextElement();
+                if(!inetAddress.isLoopbackAddress() && (inetAddress instanceof Inet4Address)){
+                    return inetAddress.getHostAddress().toString();
+                }
+            }
+        }
+        return "";
     }
 
     ///////////////////////////////////////////////////////////////////////////

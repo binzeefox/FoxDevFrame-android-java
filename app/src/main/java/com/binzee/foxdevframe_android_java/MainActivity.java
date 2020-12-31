@@ -3,6 +3,7 @@ package com.binzee.foxdevframe_android_java;
 import android.Manifest;
 import android.hardware.camera2.CameraDevice;
 import android.os.Build;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.binzee.foxdevframe.ui.FoxActivity;
@@ -18,6 +19,7 @@ import com.binzee.foxdevframe.utils.device.DeviceStatusUtil;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 
 public class MainActivity extends FoxActivity {
@@ -52,7 +54,31 @@ public class MainActivity extends FoxActivity {
     }
 
     private void test() {
+        ThreadUtils.get().executeIO(() -> {
+            try {
+                ClientUtil.get().GET("http://192.168.43.1:8080/test/test0?arg0=BinzeeFox")
+                        .request(new ClientInterface.OnCallListener() {
+                            @Override
+                            public void onStart(HttpURLConnection connection) {
+                                Log.d(TAG, "onStart: " + connection);
+                            }
 
+                            @Override
+                            public void onSuccess(HttpURLConnection connection, int responseCode, InputStream stream) {
+                                String response = ClientUtil.getStringFromInputStream(stream);
+                                Log.d(TAG, "onSuccess: " + ClientUtil.getStringFromInputStream(stream));
+                                runOnUiThread(() -> ToastUtil.toast(response, Toast.LENGTH_SHORT).showNow());
+                            }
+
+                            @Override
+                            public void onError(Throwable throwable) {
+                                Log.e(TAG, "onError: ", throwable);
+                            }
+                        });
+            } catch (IOException e) {
+                Log.e(TAG, "test: ", e);
+            }
+        });
     }
 
     private void netWorkTest() {
