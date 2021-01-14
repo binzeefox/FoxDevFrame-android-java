@@ -23,7 +23,9 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
@@ -81,13 +83,13 @@ public class ThreadUtils {
     }
 
     /**
-     * IO线程加载数据
+     * 获取Future
      *
-     * @author 狐彻 2020/10/27 17:10
+     * @author tong.xw 2020/12/31 16:33
      */
-    public <T> void callIO(Callable<T> callable, ConcurrentUtil.FutureCallback<T> callback) {
+    public <T> Future<T> callIO(Callable<T> callable) {
         if (mIOUtil == null) initIOExecutor();
-        mIOUtil.call(callable, callback);
+        return mIOUtil.call(callable);
     }
 
     /**
@@ -105,9 +107,9 @@ public class ThreadUtils {
      *
      * @author 狐彻 2020/10/27 17:10
      */
-    public <T> void callComputation(Callable<T> callable, ConcurrentUtil.FutureCallback<T> callback) {
+    public <T> Future<T> callComputation(Callable<T> callable) {
         if (mComputationUtil == null) initComputationExecutor();
-        mComputationUtil.call(callable, callback);
+        return mComputationUtil.call(callable);
     }
 
 
@@ -136,10 +138,9 @@ public class ThreadUtils {
      *
      * @author tong.xw 2020/12/24 16:07
      */
-    public <T> void callOther(@NonNull String tag, Callable<T> callable, ExecutorService defaultExecutor
-            , ConcurrentUtil.FutureCallback<T> callback) {
+    public <T> Future<T> callOther(@NonNull String tag, Callable<T> callable, ExecutorService defaultExecutor) {
         ConcurrentUtil util = getOtherExecutor(tag, defaultExecutor);
-        util.call(callable, callback);
+        return util.call(callable);
     }
 
     /**
@@ -147,8 +148,8 @@ public class ThreadUtils {
      *
      * @author tong.xw 2020/12/24 16:07
      */
-    public <T> void callOther(@NonNull String tag, Callable<T> callable, ConcurrentUtil.FutureCallback<T> callback) {
-        callOther(tag, callable, null, callback);
+    public <T> Future<T> callOther(@NonNull String tag, Callable<T> callable) {
+        return callOther(tag, callable, null);
     }
 
     /**
@@ -202,7 +203,7 @@ public class ThreadUtils {
      */
     protected void initIOExecutor() {
         ExecutorService service = new ThreadPoolExecutor(1, Integer.MAX_VALUE
-                , 1, TimeUnit.SECONDS, new LinkedBlockingQueue<>());  //一个常驻线程，无限个缓存线程
+                , 1, TimeUnit.SECONDS, new SynchronousQueue<>());  //一个常驻线程，无限个缓存线程
         mIOUtil = new ConcurrentUtil(service);
     }
 

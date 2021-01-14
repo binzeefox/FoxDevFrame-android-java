@@ -31,27 +31,13 @@ public class ConcurrentUtil {
     }
 
     /**
-     * 线程请求
+     * 获取请求Future
      *
-     * @param <T>      请求的数据类型
-     * @param callable 请求体
-     * @param callback 请求回调
+     * @author tong.xw 2020/12/31 16:31
      */
-    public <T> void call(Callable<T> callable, FutureCallback<T> callback) {
-        execute(() -> {
-            try {
-                Future<T> future = new FutureTask<>(callable);
-                callback.onStart(future);
-                T t = future.get();
-                callback.onCallback(t);
-            } catch (Exception e) {
-                callback.onError(e);
-            } finally {
-                callback.onFinish();
-            }
-        });
+    public <T> Future<T> call(Callable<T> callable) {
+        return mExecutor.submit(callable);
     }
-
 
     /**
      * 是否已经回收

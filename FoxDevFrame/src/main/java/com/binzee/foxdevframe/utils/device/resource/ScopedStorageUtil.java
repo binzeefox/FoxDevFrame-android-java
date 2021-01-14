@@ -1,8 +1,10 @@
 package com.binzee.foxdevframe.utils.device.resource;
 
+import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
@@ -11,11 +13,16 @@ import android.provider.MediaStore;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
+import androidx.fragment.app.FragmentManager;
 
 import com.binzee.foxdevframe.FoxCore;
+import com.binzee.foxdevframe.ui.tools.requests.ActivityRequester;
+import com.binzee.foxdevframe.utils.ThreadUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.Future;
 
 
 /**
@@ -99,9 +106,50 @@ public class ScopedStorageUtil {
      *
      * @author 狐彻 2020/09/10 9:35
      */
-    public void delete(Uri fileUri){
+    public void delete(Uri fileUri) {
         FoxCore.getApplication().getContentResolver()
                 .delete(fileUri, null, null);
+    }
+
+    /**
+     * 开启 文件选择器并返回Future
+     *
+     * @author tong.xw 2020/12/31 16:28
+     */
+    public Future<Uri> openFilePicker(@NonNull FragmentManager manager) {
+        return ThreadUtils.get().callIO(new Callable<Uri>() {
+            final Object lock = new Object();
+            volatile Uri result = null;
+            volatile boolean finished;
+
+            @Override
+            public Uri call() throws Exception {
+                ThreadUtils.runOnUiThread(this::requestData);
+                if (!finished) {
+                    synchronized (lock) {
+                        lock.wait();
+                    }
+                }
+                return result;
+            }
+
+            private void requestData() {
+                Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+                intent.addCategory(Intent.CATEGORY_OPENABLE);
+                intent.setType("*/*");
+
+                ActivityRequester.get(manager)
+                        .request(intent, 0x00f0f, (requestCode, resultCode, resultData) -> {
+                            synchronized (lock) {
+                                if (resultCode == Activity.RESULT_OK && resultData != null) {
+                                    result = resultData.getData();
+                                }
+                                finished = true;
+                                lock.notify();
+                            }
+                        });
+            }
+        });
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -181,7 +229,7 @@ public class ScopedStorageUtil {
          *
          * @author 狐彻 2020/09/08 15:21
          */
-        public Uri save(){
+        public Uri save() {
             return mResolver.insert(uri, values);
         }
     }

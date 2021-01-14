@@ -28,13 +28,13 @@ public class ToastUtil {
         //private constructor
     }
 
-    public static Operation toast(CharSequence text, int duration) {
-        Toast toast = Toast.makeText(get().getContext(), text, duration);
+    public static Operation toast(CharSequence text) {
+        Toast toast = Toast.makeText(get().getContext(), text, Toast.LENGTH_SHORT);
         return toast(toast);
     }
 
-    public static Operation toast(@StringRes int strId, int duration) {
-        Toast toast = Toast.makeText(get().getContext(), strId, duration);
+    public static Operation toast(@StringRes int strId) {
+        Toast toast = Toast.makeText(get().getContext(), strId, Toast.LENGTH_SHORT);
         return toast(toast);
     }
 
@@ -96,6 +96,11 @@ public class ToastUtil {
 
         private Operation(@NonNull Toast toast) {
             this.toast = toast;
+        }
+
+        public Operation setDuration(int duration) {
+            toast.setDuration(duration);
+            return this;
         }
 
         /**
