@@ -1,4 +1,4 @@
-package com.binzee.foxdevframe.utils.http;
+package com.binzee.foxdevframe.utils.net.http;
 
 import com.binzee.foxdevframe.utils.LogUtil;
 

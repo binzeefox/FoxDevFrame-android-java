@@ -1,4 +1,4 @@
-package com.binzee.foxdevframe.utils.http;
+package com.binzee.foxdevframe.utils.net.http;
 
 import java.io.InputStream;
 import java.net.HttpURLConnection;

@@ -1,4 +1,4 @@
-package com.binzee.foxdevframe.utils.socket.iot;
+package com.binzee.foxdevframe.utils.net.socket.iot;
 
 /**
  * 物联网网关

@@ -1,4 +1,4 @@
-package com.binzee.foxdevframe.utils.http;
+package com.binzee.foxdevframe.utils.net.http;
 
 import com.binzee.foxdevframe.utils.LogUtil;
 
@@ -6,9 +6,7 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
-import java.net.ProtocolException;
 import java.net.URL;
-import java.util.Map;
 
 /**
  * Post请求

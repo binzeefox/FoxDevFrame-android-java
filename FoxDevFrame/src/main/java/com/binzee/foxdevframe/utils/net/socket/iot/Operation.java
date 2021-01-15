@@ -1,4 +1,4 @@
-package com.binzee.foxdevframe.utils.socket.iot;
+package com.binzee.foxdevframe.utils.net.socket.iot;
 
 /**
  * TODO 网关操作

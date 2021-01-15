@@ -1,9 +1,6 @@
 package com.binzee.foxdevframe_android_java;
 
 import android.Manifest;
-import android.app.Activity;
-import android.content.Intent;
-import android.hardware.camera2.CameraDevice;
 import android.net.Uri;
 import android.os.Build;
 import android.util.Log;
@@ -13,23 +10,18 @@ import com.binzee.foxdevframe.ui.FoxActivity;
 import com.binzee.foxdevframe.ui.tools.launcher.Launcher;
 import com.binzee.foxdevframe.ui.tools.popup.ToastUtil;
 import com.binzee.foxdevframe.ui.tools.popup.dialog.SystemDialogHelper;
-import com.binzee.foxdevframe.ui.tools.requests.ActivityRequester;
 import com.binzee.foxdevframe.utils.LogUtil;
 import com.binzee.foxdevframe.utils.ThreadUtils;
 import com.binzee.foxdevframe.utils.device.resource.ScopedStorageUtil;
-import com.binzee.foxdevframe.utils.http.ClientInterface;
-import com.binzee.foxdevframe.utils.http.ClientUtil;
+import com.binzee.foxdevframe.utils.net.http.ClientInterface;
+import com.binzee.foxdevframe.utils.net.http.ClientUtil;
 import com.binzee.foxdevframe.utils.permission.PermissionUtil;
 import com.binzee.foxdevframe.utils.device.DeviceStatusUtil;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 
 public class MainActivity extends FoxActivity {
     private static final String TAG = "MainActivity";

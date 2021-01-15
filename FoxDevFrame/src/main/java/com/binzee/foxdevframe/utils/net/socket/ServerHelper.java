@@ -1,4 +1,4 @@
-package com.binzee.foxdevframe.utils.socket;
+package com.binzee.foxdevframe.utils.net.socket;
 
 import android.Manifest;
 import android.util.Log;
