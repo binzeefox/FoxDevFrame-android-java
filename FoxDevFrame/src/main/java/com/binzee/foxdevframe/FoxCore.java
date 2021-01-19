@@ -10,143 +10,112 @@ import android.content.res.Resources;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.binzee.foxdevframe.ui.FoxActivity;
-import com.binzee.foxdevframe.utils.LogUtil;
-import com.binzee.foxdevframe.utils.device.resource.SharedPreferenceUtil;
+import com.binzee.foxdevframe.dev.utils.LogUtil;
 
 import java.util.Locale;
 import java.util.Stack;
 
 /**
- * 核心类
+ * 核心类<p>
  * <p>
- * 提供静态Activity单例
- * 提供应用信息
- * 注册LifeCycle
+ * - 提供静态Activity单例<p>
+ * - 提供应用信息<p>
+ * - 注册LifeCycle
  *
- * @author 狐彻
- * 2020/10/21 8:10
+ * @author tong.xw
+ * 2021/01/18 10:38
  */
 public class FoxCore {
     private static final String TAG = "FoxCore";
 
-    // Application实例
-    private Application application;
+    // 配置
+    private final FoxConfigs configs = new FoxConfigs();
+
+    // ApplicationContext，全局获取
+    private Context appContext;
 
     // 返回栈
-    // @author 狐彻 2020/10/21 8:44
-    private final ActivityStack mActivityStack = new ActivityStack();
+    private final ActivityStack mBackStack = new ActivityStack();
 
     // 私有化构造器
-    // @author 狐彻 2020/10/21 8:54
     private FoxCore() {
-        //private constructor
+        // private constructor
     }
 
     /**
      * 获取单例
-     *
-     * @author 狐彻 2020/10/21 9:33
      */
     @NonNull
-    public static FoxCore get() {
-        FoxCore core = FoxCoreHolder.instance;
-        if (core.application == null)
+    private static FoxCore get() {
+        FoxCore core = Holder.instance;
+        if (core.appContext == null)
             throw new UnInitializedException();
         return core;
     }
 
     /**
      * 初始化
-     *
-     * @author 狐彻 2020/10/21 8:13
      */
-    public static void init(Context context) {
-        if (context instanceof Application)
-            FoxCoreHolder.instance.application = (Application) context;
-        else
-            FoxCoreHolder.instance.application = (Application) context.getApplicationContext();
-        FoxCoreHolder.instance.registerActivityCallback();
+    public static FoxCore init(Context ctx) {
+        Holder.instance.appContext = ctx.getApplicationContext();
+        Holder.instance.registerActivityCallback();
 
-        // 设置语言
-        // @author 狐彻 2020/11/17 15:30
-        String languageTag = SharedPreferenceUtil.get()
-                .readString("FOX_SETTING", "languageTag"
-                        , Locale.getDefault().toLanguageTag());
+        // 本地化多语言设置
+        String languageTag = Holder.instance.configs.readLanguageTag();
         Locale locale = Locale.forLanguageTag(languageTag);
-        get().setLanguage(locale);
+        get().setLocale(locale, false);
+        return get();
     }
 
     /**
      * 设置语言
-     *
-     * @author 狐彻 2020/11/17 15:26
      */
-    private void setLanguage(@NonNull Locale locale) {
-        Resources r = FoxCore.getApplication().getResources();
-        DisplayMetrics m = r.getDisplayMetrics();
-        Configuration c = r.getConfiguration();
-
-        c.setLocale(locale);
-        r.updateConfiguration(c, m);
+    public static void setLocal(@NonNull Locale local) {
+        get().setLocale(local, true);
     }
 
     /**
-     * 获取Application单例
-     *
-     * @author 狐彻 2020/10/21 8:45
+     * 获取ApplicationContext
      */
-    @NonNull
-    public static Application getApplication() {
-        return get().application;
+    public static Context getApplicationContext() {
+        return get().appContext;
     }
 
     /**
-     * 获取返回栈
-     *
-     * @author 狐彻 2020/10/21 9:25
+     * 获取模拟返回栈
      */
-    public static ActivityStack getActivityStack() {
-        return get().mActivityStack;
+    public static ActivityStack getSimulatedBackStack() {
+        return get().mBackStack;
     }
 
     /**
-     * 获取栈顶Activity
-     *
-     * @author 狐彻 2020/10/21 9:25
+     * 获取资源
      */
-    public static Activity getTopActivity() {
-        return getActivityStack().peek();
+    public static Resources getResource() {
+        return getApplicationContext().getResources();
     }
 
     /**
      * 获取包名
-     *
-     * @author 狐彻 2020/10/21 9:30
      */
     public static String getPackageName() {
-        return getApplication().getPackageName();
+        return getApplicationContext().getPackageName();
     }
 
     /**
      * 获取PackageManager
-     *
-     * @author 狐彻 2020/10/21 9:28
      */
     @NonNull
     public static PackageManager getPackageManager() {
-        return getApplication().getPackageManager();
+        return getApplicationContext().getPackageManager();
     }
 
     /**
-     * 获取包信息
-     *
-     * @author 狐彻 2020/10/21 9:31
+     * 获取该App包信息
      */
     @NonNull
     public static PackageInfo getPackageInfo() throws PackageManager.NameNotFoundException {
@@ -155,15 +124,13 @@ public class FoxCore {
 
     /**
      * 获取版本名
-     *
-     * @author 狐彻 2020/10/21 9:31
      */
     @NonNull
     public static String getVersionName() {
         try {
             return getPackageInfo().versionName;
         } catch (PackageManager.NameNotFoundException e) {
-            LogUtil.e(TAG, "getVersionName: 获取失败", e);
+            LogUtil.tag(TAG).message("获取版本名失败").throwable(e).e();
             return "";
         }
     }
@@ -171,8 +138,7 @@ public class FoxCore {
     /**
      * 获取版本号，兼容Android P
      *
-     * @return 获取失败则返回 -1
-     * @author 狐彻 2020/10/21 9:34
+     * @return 若获取失败则返回 -1
      */
     public static long getVersionCode() {
         try {
@@ -181,7 +147,7 @@ public class FoxCore {
                 return info.getLongVersionCode();
             } else return info.versionCode;
         } catch (PackageManager.NameNotFoundException e) {
-            Log.e(TAG, "getVersionCode: 获取失败", e);
+            LogUtil.tag(TAG).message("获取版本号失败").throwable(e).e();
             return -1;
         }
     }
@@ -191,33 +157,45 @@ public class FoxCore {
     ///////////////////////////////////////////////////////////////////////////
 
     /**
+     * 设置语言
+     */
+    private void setLocale(@NonNull Locale locale, boolean localize) {
+        Resources r = FoxCore.getResource();
+        DisplayMetrics m = r.getDisplayMetrics();
+        Configuration c = r.getConfiguration();
+
+        c.setLocale(locale);
+        r.updateConfiguration(c, m);
+        if (localize) configs.writeLanguageTag(locale.toLanguageTag());
+    }
+
+    /**
      * 注册Activity回调
-     *
-     * @author 狐彻 2020/10/21 8:56
      */
     private void registerActivityCallback() {
-        getApplication().registerActivityLifecycleCallbacks(new FoxActivity.FoxActivityCallback() {
-            @Override
-            public void onActivityCreated(@NonNull Activity activity, @Nullable Bundle savedInstanceState) {
-                super.onActivityCreated(activity, savedInstanceState);
-                //生成Activity，压入栈
-                mActivityStack.push(activity);
-            }
+        ((Application) getApplicationContext())
+                .registerActivityLifecycleCallbacks(new FoxActivityLifecycleCallback() {
+                    @Override
+                    public void onActivityCreated(@NonNull Activity activity, @Nullable Bundle savedInstanceState) {
+                        super.onActivityCreated(activity, savedInstanceState);
+                        // 入栈
+                        mBackStack.push(activity);
+                    }
 
-            @Override
-            public void onActivityResumed(@NonNull Activity activity) {
-                super.onActivityResumed(activity);
-                //Activity可见，移至栈顶
-                mActivityStack.moveToTop(activity);
-            }
+                    @Override
+                    public void onActivityResumed(@NonNull Activity activity) {
+                        super.onActivityResumed(activity);
+                        // 状态可见，转入栈顶
+                        mBackStack.moveToTop(activity);
+                    }
 
-            @Override
-            public void onActivityDestroyed(@NonNull Activity activity) {
-                super.onActivityDestroyed(activity);
-                //Activity回收，移除
-                mActivityStack.superRemove(activity);
-            }
-        });
+                    @Override
+                    public void onActivityDestroyed(@NonNull Activity activity) {
+                        super.onActivityDestroyed(activity);
+                        // 回收
+                        mBackStack.superRemove(activity);
+                    }
+                });
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -229,7 +207,7 @@ public class FoxCore {
      *
      * @author 狐彻 2020/10/21 9:19
      */
-    private static class ActivityStack extends Stack<Activity> {
+    public static class ActivityStack extends Stack<Activity> {
         @Override
         public synchronized Activity pop() {
             Activity activity = super.pop();
@@ -259,8 +237,8 @@ public class FoxCore {
          *
          * @author 狐彻 2020/10/21 9:23
          */
-        private boolean superRemove(@NonNull Object o) {
-            return super.remove(o);
+        private void superRemove(@NonNull Object o) {
+            super.remove(o);
         }
 
         /**
@@ -279,7 +257,7 @@ public class FoxCore {
      *
      * @author 狐彻 2020/10/21 8:16
      */
-    private static class FoxCoreHolder {
+    private static class Holder {
         private static final FoxCore instance = new FoxCore();
     }
 

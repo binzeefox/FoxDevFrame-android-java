@@ -1,3 +1,4 @@
+include ':dev'
 include ':FoxDevFrame'
 include ':app'
 rootProject.name = "FoxDevFrame-android-java"

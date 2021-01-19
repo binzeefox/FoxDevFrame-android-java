@@ -11,15 +11,14 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Objects;
-
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
- * 日志工具类
- * <p>
- * 手动更改{@link #CURRENT_CLASS} 的值来改变当前的打印等级
+ * 日志工具
  *
- * @author binze
- * 2019/11/19 9:31
+ * @author tong.xw
+ * 2021/01/18 11:00
  */
 public class LogUtil {
     public static final int CLASS_NONE = -1;   //CURRENT_CLASS为此时，不打印Log
@@ -29,85 +28,42 @@ public class LogUtil {
     public static final int CLASS_I = 3;   //CURRENT_CLASS为此时，只打印E,W,D和I
     public static final int CLASS_V = 4;   //CURRENT_CLASS为此时，全部打印
 
-    public static int CURRENT_CLASS = CLASS_V;   //打印指示器
+    private static int CURRENT_CLASS = CLASS_V;   //打印指示器
+
+    private final ExecutorService logExecutor = Executors.newSingleThreadExecutor();
 
     private static FoxLog firstLog = null;
     private static FoxLog lastLog = null;
 
+    // 非静态全局变量 START
+    @NonNull
+    private final String tag;
+    @NonNull
+    private String message = "";
+    private Throwable t = null;
+    // 非静态全局变量 FINAL
 
-    //V
-    public static void v(CharSequence tag, CharSequence text) {
-        if (CURRENT_CLASS >= CLASS_V) {
-            Log.v(tag.toString(), text.toString());
-            recordLog("V", tag, text, null);
-        }
+    /**
+     * 私有化构造器
+     *
+     * @param tag 标签
+     */
+    private LogUtil(@NonNull String tag) {
+        this.tag = tag;
     }
 
-    public static void v(CharSequence tag, CharSequence text, Throwable throwable) {
-        if (CURRENT_CLASS >= CLASS_V) {
-            Log.v(tag.toString(), text.toString(), throwable);
-            recordLog("V", tag, text, throwable);
-        }
-    }
-
-    //D
-    public static void d(CharSequence tag, CharSequence text) {
-        if (CURRENT_CLASS >= CLASS_D) {
-            Log.d(tag.toString(), text.toString());
-            recordLog("D", tag, text, null);
-        }
-    }
-
-    public static void d(CharSequence tag, CharSequence text, Throwable throwable) {
-        if (CURRENT_CLASS >= CLASS_D) {
-            Log.d(tag.toString(), text.toString(), throwable);
-            recordLog("D", tag, text, throwable);
-        }
-    }
-
-    //I
-    public static void i(CharSequence tag, CharSequence text) {
-        if (CURRENT_CLASS >= CLASS_I) {
-            Log.i(tag.toString(), text.toString());
-            recordLog("I", tag, text, null);
-        }
-    }
-
-    public static void i(CharSequence tag, CharSequence text, Throwable throwable) {
-        if (CURRENT_CLASS >= CLASS_I) {
-            Log.i(tag.toString(), text.toString(), throwable);
-            recordLog("I", tag, text, throwable);
-        }
-    }
-
-    //W
-    public static void w(CharSequence tag, CharSequence text) {
-        if (CURRENT_CLASS >= CLASS_W) {
-            Log.w(tag.toString(), text.toString());
-            recordLog("W", tag, text, null);
-        }
-    }
-
-    public static void w(CharSequence tag, CharSequence text, Throwable throwable) {
-        if (CURRENT_CLASS >= CLASS_W) {
-            Log.w(tag.toString(), text.toString(), throwable);
-            recordLog("W", tag, text, throwable);
-        }
-    }
-
-    //E
-    public static void e(CharSequence tag, CharSequence text) {
-        if (CURRENT_CLASS >= CLASS_E) {
-            Log.e(tag.toString(), text.toString());
-            recordLog("E", tag, text, null);
-        }
-    }
-
-    public static void e(CharSequence tag, CharSequence text, Throwable throwable) {
-        if (CURRENT_CLASS >= CLASS_E) {
-            Log.e(tag.toString(), text.toString(), throwable);
-            recordLog("E", tag, text, throwable);
-        }
+    /**
+     * 设置log级别
+     *
+     * @see LogUtil#CLASS_NONE
+     * @see LogUtil#CLASS_E
+     * @see LogUtil#CLASS_W
+     * @see LogUtil#CLASS_D
+     * @see LogUtil#CLASS_I
+     * @see LogUtil#CLASS_V
+     */
+    public static void setLogFilter(int filterClass) {
+        CURRENT_CLASS = filterClass;
     }
 
     /**
@@ -116,7 +72,6 @@ public class LogUtil {
      * @author 狐彻 2020/11/06 14:17
      */
     public static void enableANRLog() {
-        final String TAG = "FoxGlobalWatcher";
         Looper.getMainLooper().setMessageLogging(new Printer() {
             private long startWorkTimeMillis = 0L;
 
@@ -125,11 +80,13 @@ public class LogUtil {
                 if (x.startsWith(">>>>> Dispatching to Handler")) {
                     startWorkTimeMillis = System.currentTimeMillis();
                 } else if (x.startsWith("<<<<< Finished to Handler")) {
+                    LogUtil log = LogUtil.tag("ANRLogger");
                     long duration = System.currentTimeMillis() - startWorkTimeMillis;
-                    if (duration > 150)
-                        w(TAG, "主线程执行耗时过长 -> " + duration + "毫秒\n" + x);
-                    else if (duration > 1000)
-                        e(TAG, "主线程执行耗时过长 -> " + duration + "毫秒\n" + x);
+                    if (duration > 1000)
+                        log.message("主线程执行耗时过长 -> " + duration + "毫秒\n" + x).e();
+                    else if (duration > 150)
+                        log.message("主线程执行耗时过长 -> " + duration + "毫秒\n" + x).w();
+
                 }
             }
         });
@@ -141,8 +98,7 @@ public class LogUtil {
      * @author 狐彻 2020/10/27 22:52
      */
     public static void setGlobalExceptionCapture(OnExceptionCapturedListener listener) {
-        final String TAG = "FoxGlobalLogger";
-
+        LogUtil log = LogUtil.tag("GlobalExceptionCapture");
         Handler handler = new Handler(Looper.getMainLooper());
         handler.post(() -> {
             //noinspection InfiniteLoopStatement
@@ -151,31 +107,100 @@ public class LogUtil {
                     Looper.loop();
                 } catch (Exception e) {
                     // 主线程崩溃
-                    e(TAG, "主线程异常!!", e);
-                    if (listener != null) listener.onCapture(e);
+                    log.message("主线程异常!!").throwable(e).e();
+                    if (listener != null)
+                        listener.onCapture(true, Thread.currentThread(), e);
                 }
             }
         });
         Thread.setDefaultUncaughtExceptionHandler((t, e) -> {
-            e(TAG, "异步线程异常!!", e);
-            if (Objects.equals(t, Looper.getMainLooper().getThread()) && listener != null)
-                listener.onCapture(e);
+            log.message("异步线程异常!!").throwable(e).e();
+            if (!Objects.equals(t, Looper.getMainLooper().getThread()) && listener != null)
+                listener.onCapture(false, t, e);
         });
     }
 
     /**
-     * 获取用该类进行的打印记录
-     *
-     * @author 狐彻 2020/11/06 14:47
+     * 同步方法 ！！主线程警告！！ <p>
+     * 获取利用该类打印的所有可见日志的字符串
      */
-    public static String getLogRecord() {
-        FoxLog log = firstLog;
-        StringBuilder sb = new StringBuilder();
-        while (log != null) {
-            sb.append(log.toString());
-            log = log.next;
+    public static String getLogRecordText() {
+        synchronized (LogUtil.class) {
+            FoxLog log = firstLog;
+            StringBuilder sb = new StringBuilder();
+            while (log != null) {
+                sb.append(log.toString());
+                log = log.next;
+            }
+            return sb.toString();
         }
-        return sb.toString();
+    }
+
+    /**
+     * tag
+     */
+    public static LogUtil tag(@NonNull String tag) {
+        return new LogUtil(tag);
+    }
+
+    /**
+     * 日志内容
+     */
+    public LogUtil message(@NonNull String msg) {
+        this.message = msg;
+        return this;
+    }
+
+    /**
+     * 异常捕获
+     */
+    public LogUtil throwable(Throwable throwable) {
+        this.t = throwable;
+        return this;
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+    // 打印方法
+    ///////////////////////////////////////////////////////////////////////////
+
+    // v
+    public void v() {
+        if (CURRENT_CLASS >= CLASS_V) {
+            Log.v(tag, message, t);
+            recordLog("V", tag, message, t);
+        }
+    }
+
+    // d
+    public void d() {
+        if (CURRENT_CLASS >= CLASS_D) {
+            Log.d(tag, message, t);
+            recordLog("D", tag, message, t);
+        }
+    }
+
+    // i
+    public void i() {
+        if (CURRENT_CLASS >= CLASS_I) {
+            Log.i(tag, message, t);
+            recordLog("I", tag, message, t);
+        }
+    }
+
+    // w
+    public void w() {
+        if (CURRENT_CLASS >= CLASS_W) {
+            Log.w(tag, message, t);
+            recordLog("W", tag, message, t);
+        }
+    }
+
+    // e
+    public void e() {
+        if (CURRENT_CLASS >= CLASS_E) {
+            Log.e(tag, message, t);
+            recordLog("E", tag, message, t);
+        }
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -183,37 +208,31 @@ public class LogUtil {
     ///////////////////////////////////////////////////////////////////////////
 
     /**
-     * 记录
-     *
-     * @author 狐彻 2020/11/06 14:44
+     * 记录本地化
      */
-    private static void recordLog(String level, CharSequence tag, CharSequence text, Throwable e) {
-        FoxLog log = new FoxLog(level, tag.toString(), text.toString(), e);
-        if (firstLog == null) {
-            firstLog = log;
-            return;
-        }
-        if (lastLog == null) {
-            firstLog.next = log;
-            lastLog = log;
-            return;
-        }
-        lastLog.next = log;
-        lastLog = log;
+    private void recordLog(String level, String tag, String message, Throwable t) {
+        // 读写锁在该方法的调用方法中实现
+        logExecutor.execute(() -> {
+            synchronized (LogUtil.class) {
+                FoxLog log = new FoxLog(level, tag, message, t);
+                if (firstLog == null) {
+                    firstLog = log;
+                    return;
+                }
+                if (lastLog == null) {
+                    firstLog.next = log;
+                    lastLog = log;
+                    return;
+                }
+                lastLog.next = log;
+                lastLog = log;
+            }
+        });
     }
 
     ///////////////////////////////////////////////////////////////////////////
     // 内部类
     ///////////////////////////////////////////////////////////////////////////
-
-    /**
-     * 异常捕捉回调
-     *
-     * @author 狐彻 2020/10/28 8:41
-     */
-    public interface OnExceptionCapturedListener {
-        void onCapture(Throwable e);
-    }
 
     /**
      * 日志数据类
@@ -229,7 +248,7 @@ public class LogUtil {
 
         FoxLog next;
 
-        public FoxLog(String level, String tag, String msg, Throwable e) {
+        FoxLog(String level, String tag, String msg, Throwable e) {
             this.level = level;
             this.tag = tag;
             this.msg = msg;
@@ -244,5 +263,14 @@ public class LogUtil {
             log += "\n";
             return log;
         }
+    }
+
+    /**
+     * 异常捕捉回调
+     *
+     * @author 狐彻 2020/10/28 8:41
+     */
+    public interface OnExceptionCapturedListener {
+        void onCapture(boolean isMainThread, Thread t, Throwable e);
     }
 }

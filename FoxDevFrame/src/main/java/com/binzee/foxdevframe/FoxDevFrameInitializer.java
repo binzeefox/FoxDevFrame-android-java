@@ -9,18 +9,16 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * StartUp初始化工具
+ * 初始化工具
  *
- * @author 狐彻
- * 2020/10/21 8:22
+ * @author tong.xw
+ * 2021/01/18 12:09
  */
 public class FoxDevFrameInitializer implements Initializer<FoxCore> {
-
     @NonNull
     @Override
     public FoxCore create(@NonNull Context context) {
-        FoxCore.init(context);
-        return FoxCore.get();
+        return FoxCore.init(context);
     }
 
     @NonNull

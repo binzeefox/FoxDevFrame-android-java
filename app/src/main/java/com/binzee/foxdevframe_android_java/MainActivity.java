@@ -4,12 +4,10 @@ import android.Manifest;
 import android.net.Uri;
 import android.os.Build;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.binzee.foxdevframe.ui.FoxActivity;
-import com.binzee.foxdevframe.ui.tools.launcher.Launcher;
-import com.binzee.foxdevframe.ui.tools.popup.ToastUtil;
-import com.binzee.foxdevframe.ui.tools.popup.dialog.SystemDialogHelper;
+import com.binzee.foxdevframe.ui.utils.NoticeUtil;
+import com.binzee.foxdevframe.ui.utils.launcher.Launcher;
 import com.binzee.foxdevframe.utils.LogUtil;
 import com.binzee.foxdevframe.utils.ThreadUtils;
 import com.binzee.foxdevframe.utils.device.resource.ScopedStorageUtil;
@@ -25,9 +23,10 @@ import java.util.concurrent.ExecutionException;
 
 public class MainActivity extends FoxActivity {
     private static final String TAG = "MainActivity";
+    private final LogUtil log = LogUtil.tag(TAG);
 
     @Override
-    protected int getContentViewResource() {
+    public int getContentViewResource() {
         return R.layout.activity_main;
     }
 
@@ -35,23 +34,9 @@ public class MainActivity extends FoxActivity {
     protected void onCreate() {
 //        setFullScreen();
         LogUtil.enableANRLog();
-        LogUtil.setGlobalExceptionCapture(e ->
-                LogUtil.e(TAG, "onCreate: ", e));
-
+        LogUtil.setGlobalExceptionCapture((isMainThread, t, e) ->
+                log.message("onCreate: thread = " + t.getName()).throwable(e).e());
         findViewById(R.id.confirm_button).setOnClickListener(v -> test());
-
-        //设置二次返回键点击验证
-        setBackPressTwiceCheck(new OnPressTwiceListener() {
-            @Override
-            public void onFirstPress() {
-                ToastUtil.toast("再次点击关闭").setDuration(Toast.LENGTH_LONG).showNow();
-            }
-
-            @Override
-            public void onSecondPress() {
-                superOnBackPressed();
-            }
-        }, 2000);
     }
 
     private void test() {
@@ -65,37 +50,10 @@ public class MainActivity extends FoxActivity {
                     Log.e(TAG, "test: ", e);
                 }
             });
-        } else ToastUtil.toast("SDK版本过低").showNow();
+        } else NoticeUtil.toast("SDK版本过低").showNow();
     }
 
-    private void netWorkTest() {
-        ThreadUtils.get().executeIO(() -> {
-            try {
-                ClientUtil.get().GET("https://www.baidu.com")
-                        .request(new ClientInterface.OnCallListener() {
 
-                            @Override
-                            public void onStart(HttpURLConnection connection) {
-                                LogUtil.d(TAG, "onResponse: " + connection);
-                            }
-
-                            @Override
-                            public void onSuccess(HttpURLConnection connection, int responseCode, InputStream stream) {
-                                String s = ClientUtil.getStringFromInputStream(stream);
-                                LogUtil.d(TAG, "onSuccess: " + s);
-                                connection.disconnect();
-                            }
-
-                            @Override
-                            public void onError(Throwable throwable) {
-                                LogUtil.e(TAG, "onError: ", throwable);
-                            }
-                        });
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        });
-    }
 
     private void permissionTest() {
         PermissionUtil.with(this)
@@ -108,7 +66,7 @@ public class MainActivity extends FoxActivity {
     }
 
     private void systemSettingTest() {
-        Launcher.with(this)
+        new Launcher(this)
                 .systemShortCuts()
 //                        .launchApplicationDetails());
 //                        .launchConnectionSetting());
@@ -118,19 +76,5 @@ public class MainActivity extends FoxActivity {
 //                        .launchLocationSetting());
 //                        .launchSoundSetting());
                 .launchWifiSetting();
-    }
-
-    private void systemSettingPopupTest() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            SystemDialogHelper helper = new SystemDialogHelper();
-            helper.showWifiSetting();
-//                .showVolumeSetting();
-//                .showNFCSetting();
-//                .showInternetSetting();
-        }
-    }
-
-    private void netWorkStateTest() {
-        LogUtil.d(TAG, "netWorkStateTest: isNetworkMetered " + DeviceStatusUtil.get().isNetworkNotMetered());
     }
 }
