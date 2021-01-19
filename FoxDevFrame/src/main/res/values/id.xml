@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <item name="view_util_debounce_id" type="id"/>
+    <item name="fox_frame_java_view_util_debounce_id" type="id"/>
 </resources>

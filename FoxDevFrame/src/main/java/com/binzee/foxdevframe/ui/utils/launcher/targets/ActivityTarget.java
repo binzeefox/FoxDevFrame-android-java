@@ -8,7 +8,8 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.binzee.foxdevframe.dev.ui.utils.launcher.ILauncherTarget;
+import com.binzee.foxdevframe.ui.utils.launcher.ILauncherTarget;
+
 
 /**
  * 目标为Activity的跳转

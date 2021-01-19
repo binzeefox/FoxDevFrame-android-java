@@ -65,9 +65,9 @@ class FoxBleDevice implements BleDevice {
         mCallback = connectCallback;
         BluetoothGattCallback callback = new GattCallback();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            mDevice.connectGatt(FoxCore.getApplication()
+            mDevice.connectGatt(FoxCore.getApplicationContext()
                     , mAutoConnect, callback, TRANSPORT, PHY, mConnectHandler);
-        } else mDevice.connectGatt(FoxCore.getApplication()
+        } else mDevice.connectGatt(FoxCore.getApplicationContext()
                 , mAutoConnect, callback, TRANSPORT);
     }
 

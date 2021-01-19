@@ -107,7 +107,7 @@ public class DeviceStatusUtil {
     @RequiresApi(api = Build.VERSION_CODES.Q)
     @RequiresPermission(Manifest.permission.READ_PHONE_STATE)
     public boolean is5GConnected() {
-        TelephonyManager manager = (TelephonyManager) FoxCore.getApplication()
+        TelephonyManager manager = (TelephonyManager) FoxCore.getApplicationContext()
                 .getSystemService(Context.TELEPHONY_SERVICE);
         int networkType = manager.getNetworkType();
         return networkType == TelephonyManager.NETWORK_TYPE_NR;
@@ -177,7 +177,7 @@ public class DeviceStatusUtil {
         ConnectivityManager manager = getConnectivityManager();
         if (manager != null) {
             manager.registerDefaultNetworkCallback(callback);
-        } else LogUtil.e(TAG, "registerNetworkListener: 注册网络状态失败，没有网络连接");
+        } else LogUtil.tag(TAG).message("registerNetworkListener: 注册网络状态失败，没有网络连接").e();
     }
 
     /**
@@ -189,7 +189,7 @@ public class DeviceStatusUtil {
         ConnectivityManager manager = getConnectivityManager();
         if (manager != null) {
             manager.unregisterNetworkCallback(callback);
-        } else LogUtil.e(TAG, "unregisterNetworkListener: 注销网络状态失败，没有网络连接");
+        } else LogUtil.tag(TAG).message("unregisterNetworkListener: 注销网络状态失败，没有网络连接").e();
     }
 
     /**
@@ -232,7 +232,7 @@ public class DeviceStatusUtil {
      * @author binze 2019/11/5 12:02
      */
     public boolean isGPSEnabled() {
-        LocationManager manager = (LocationManager) FoxCore.getApplication()
+        LocationManager manager = (LocationManager) FoxCore.getApplicationContext()
                 .getSystemService(Context.LOCATION_SERVICE);
         return manager != null && manager.isProviderEnabled(LocationManager.GPS_PROVIDER);
     }
@@ -243,7 +243,7 @@ public class DeviceStatusUtil {
      * @return 单位kb
      */
     public long getFreeMemKB() {
-        ActivityManager manager = (ActivityManager) FoxCore.getApplication()
+        ActivityManager manager = (ActivityManager) FoxCore.getApplicationContext()
                 .getSystemService(Activity.ACTIVITY_SERVICE);
         ActivityManager.MemoryInfo info = new ActivityManager.MemoryInfo();
         if (manager == null) return -1;
@@ -258,7 +258,7 @@ public class DeviceStatusUtil {
      */
     public void showSoftKeyboard(View view) {
         if (view.requestFocus()) {
-            InputMethodManager imm = (InputMethodManager) FoxCore.getApplication()
+            InputMethodManager imm = (InputMethodManager) FoxCore.getApplicationContext()
                     .getSystemService(Context.INPUT_METHOD_SERVICE);
             if (imm != null) imm.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT);
         }
@@ -275,7 +275,7 @@ public class DeviceStatusUtil {
             if (result.toLowerCase().contains("is already running as root"))
                 return true;
         } catch (IOException e) {
-            LogUtil.v(TAG, "isPhoneRooted: ", e);
+            LogUtil.tag(TAG).message("isPhoneRooted: ").throwable(e).v();
         }
         return false;
     }
@@ -290,7 +290,7 @@ public class DeviceStatusUtil {
      * @author 狐彻 2020/10/27 9:59
      */
     private ConnectivityManager getConnectivityManager() {
-        return (ConnectivityManager) FoxCore.getApplication()
+        return (ConnectivityManager) FoxCore.getApplicationContext()
                 .getSystemService(Context.CONNECTIVITY_SERVICE);
     }
 
@@ -311,7 +311,7 @@ public class DeviceStatusUtil {
                 }
             }
         } catch (SocketException e) {
-            LogUtil.e(TAG, "getDataIPAddress: ", e);
+            LogUtil.tag(TAG).message("getDataIPAddress: ").throwable(e).e();
         }
         return null;
     }
@@ -322,7 +322,7 @@ public class DeviceStatusUtil {
      * @author 狐彻 2020/09/12 10:50
      */
     private String getWifiIPAddress() {
-        WifiManager manager = (WifiManager) FoxCore.getApplication()
+        WifiManager manager = (WifiManager) FoxCore.getApplicationContext()
                 .getApplicationContext()
                 .getSystemService(Context.WIFI_SERVICE);
         WifiInfo info = manager.getConnectionInfo();

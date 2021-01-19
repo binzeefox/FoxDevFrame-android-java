@@ -36,7 +36,7 @@ public class SensorUtil {
         }
 
         Sensor getSensor() {
-            SensorManager manager = (SensorManager) FoxCore.getApplication()
+            SensorManager manager = (SensorManager) FoxCore.getApplicationContext()
                     .getSystemService(Context.SENSOR_SERVICE);
             return manager.getDefaultSensor(value);
         }

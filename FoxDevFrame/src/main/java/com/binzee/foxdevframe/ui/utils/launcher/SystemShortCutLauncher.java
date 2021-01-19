@@ -4,7 +4,8 @@ import android.content.Intent;
 import android.net.Uri;
 import android.provider.Settings;
 
-import com.binzee.foxdevframe.dev.FoxCore;
+import com.binzee.foxdevframe.FoxCore;
+
 
 /**
  * 系统设置页面快捷入口

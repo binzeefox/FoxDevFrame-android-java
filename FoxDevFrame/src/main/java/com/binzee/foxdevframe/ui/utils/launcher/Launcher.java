@@ -8,8 +8,9 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.binzee.foxdevframe.dev.FoxCore;
-import com.binzee.foxdevframe.dev.ui.utils.launcher.targets.ActivityTarget;
+import com.binzee.foxdevframe.FoxCore;
+import com.binzee.foxdevframe.ui.utils.launcher.targets.ActivityTarget;
+
 
 /**
  * 页面跳转工具

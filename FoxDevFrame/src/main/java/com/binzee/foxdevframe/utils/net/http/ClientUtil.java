@@ -46,7 +46,7 @@ public class ClientUtil {
             }
             return sb.toString().trim();
         } catch (IOException e) {
-            LogUtil.e(TAG, "getStringFromInputStream: ", e);
+            LogUtil.tag(TAG).message("getStringFromInputStream: ").throwable(e).e();
             return null;
         }
     }

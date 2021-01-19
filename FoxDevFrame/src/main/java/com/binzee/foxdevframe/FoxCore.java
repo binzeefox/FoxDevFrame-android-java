@@ -14,7 +14,8 @@ import android.util.DisplayMetrics;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.binzee.foxdevframe.dev.utils.LogUtil;
+
+import com.binzee.foxdevframe.utils.LogUtil;
 
 import java.util.Locale;
 import java.util.Stack;
@@ -95,7 +96,7 @@ public class FoxCore {
     /**
      * 获取资源
      */
-    public static Resources getResource() {
+    public static Resources getResources() {
         return getApplicationContext().getResources();
     }
 
@@ -160,7 +161,7 @@ public class FoxCore {
      * 设置语言
      */
     private void setLocale(@NonNull Locale locale, boolean localize) {
-        Resources r = FoxCore.getResource();
+        Resources r = FoxCore.getResources();
         DisplayMetrics m = r.getDisplayMetrics();
         Configuration c = r.getConfiguration();
 

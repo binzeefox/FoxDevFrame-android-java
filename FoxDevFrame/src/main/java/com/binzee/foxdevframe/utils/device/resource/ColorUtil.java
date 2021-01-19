@@ -36,7 +36,6 @@ public class ColorUtil {
         int green = (color & 0x00ff00) >> 8;
         int blue = (color & 0x0000ff);
 
-        LogUtil.d(TAG, "getColorRgb: rgb = " + Arrays.toString(new int[]{red, green, blue}));
         return new int[]{red, green, blue};
     }
 }

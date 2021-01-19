@@ -28,8 +28,8 @@ public class FileUtil {
      */
     public static File getCacheDir() {
         if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState()))
-            return FoxCore.getApplication().getExternalCacheDir();
-        return FoxCore.getApplication().getCacheDir();
+            return FoxCore.getApplicationContext().getExternalCacheDir();
+        return FoxCore.getApplicationContext().getCacheDir();
     }
 
     /**
@@ -40,8 +40,8 @@ public class FileUtil {
     public static File getCacheDir(@Nullable String folderName) {
         File dir = null;
         if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState()))
-            dir = FoxCore.getApplication().getExternalCacheDir();
-        else dir = FoxCore.getApplication().getCacheDir();
+            dir = FoxCore.getApplicationContext().getExternalCacheDir();
+        else dir = FoxCore.getApplicationContext().getCacheDir();
         if (folderName == null || TextUtils.isEmpty(folderName)) return dir;
 
         if (dir == null) return null;
@@ -56,7 +56,7 @@ public class FileUtil {
         if (dir1.mkdir())
             return dir1;
 
-        LogUtil.e(TAG, "getCacheDir: 创建缓存文件夹失败" );
+        LogUtil.tag(TAG).message("getCacheDir: 创建缓存文件夹失败").e();
         return null;
     }
 
@@ -80,7 +80,7 @@ public class FileUtil {
         try {
             if (file.createNewFile())
                 return file;
-            LogUtil.e(TAG, "getCacheFile: 创建缓存文件失败" );
+            LogUtil.tag(TAG).message("getCacheFile: 创建缓存文件失败").e();
             return null;
         } catch (IOException e) {
             throw new RuntimeException(e);

@@ -43,7 +43,7 @@ class PostRequest implements ClientInterface {
 
     @Override
     public void request(OnCallListener listener) {
-        try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(connection.getOutputStream(), charsetName));) {
+        try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(connection.getOutputStream(), charsetName))) {
             listener.onStart(connection);
             connection.connect();
             writer.write(body);
@@ -52,7 +52,7 @@ class PostRequest implements ClientInterface {
             int responseCode = connection.getResponseCode();
             listener.onSuccess(connection, responseCode, connection.getInputStream());
         } catch (Exception e) {
-            LogUtil.e(TAG, "request: 请求失败", e);
+            LogUtil.tag(TAG).message("request: 请求失败").throwable(e).e();
             listener.onError(e);
             connection.disconnect();
         }

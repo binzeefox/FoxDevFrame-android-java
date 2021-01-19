@@ -36,7 +36,8 @@ public class SoundTrackUtil {
      * 私有化构造器
      */
     private SoundTrackUtil(@NonNull SoundPool pool) {
-        mManager = (AudioManager) FoxCore.getApplication().getSystemService(Context.AUDIO_SERVICE);
+        mManager = (AudioManager) FoxCore.getApplicationContext()
+                .getSystemService(Context.AUDIO_SERVICE);
         mPool = pool;
     }
 
@@ -97,7 +98,7 @@ public class SoundTrackUtil {
      * @param soundId 声音文件的ID
      */
     public SoundTrackUtil loadSound(@RawRes int soundId) {
-        mIdArray.append(soundId, getSoundPool().load(FoxCore.getApplication(), soundId, 1));
+        mIdArray.append(soundId, getSoundPool().load(FoxCore.getApplicationContext(), soundId, 1));
         return this;
     }
 

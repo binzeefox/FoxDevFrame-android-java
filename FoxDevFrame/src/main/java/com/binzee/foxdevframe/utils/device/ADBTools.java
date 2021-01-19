@@ -32,7 +32,7 @@ public class ADBTools {
             while ((read = reader.read(buffer)) > 0) {
                 output.append(buffer, 0, read);
             }
-            LogUtil.d(TAG, "execute: content = " + output.toString());
+            LogUtil.tag(TAG).message("execute: content = " + output.toString()).d();
             return output.toString();
         }
     }

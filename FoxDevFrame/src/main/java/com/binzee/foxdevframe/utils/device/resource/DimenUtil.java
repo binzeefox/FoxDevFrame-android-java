@@ -16,8 +16,7 @@ public class DimenUtil {
      * @author 狐彻 2020/10/21 11:15
      */
     public static float getDensity() {
-        return FoxCore.getApplication()
-                .getResources().getDisplayMetrics().density;
+        return FoxCore.getResources().getDisplayMetrics().density;
     }
 
     /**

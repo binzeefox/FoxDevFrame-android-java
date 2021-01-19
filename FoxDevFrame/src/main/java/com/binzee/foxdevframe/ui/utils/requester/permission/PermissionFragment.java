@@ -7,8 +7,9 @@ import androidx.annotation.RestrictTo;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 
-import com.binzee.foxdevframe.dev.FoxCore;
-import com.binzee.foxdevframe.dev.utils.LogUtil;
+
+import com.binzee.foxdevframe.FoxCore;
+import com.binzee.foxdevframe.utils.LogUtil;
 
 import java.util.ArrayList;
 import java.util.List;

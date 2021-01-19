@@ -7,7 +7,8 @@ import android.content.ServiceConnection;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.binzee.foxdevframe.dev.ui.utils.launcher.ILauncherTarget;
+
+import com.binzee.foxdevframe.ui.utils.launcher.ILauncherTarget;
 
 import java.util.concurrent.Executor;
 

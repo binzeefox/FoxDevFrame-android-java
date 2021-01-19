@@ -10,8 +10,8 @@ import android.view.View;
 
 import androidx.annotation.NonNull;
 
-import com.binzee.foxdevframe.dev.R;
-import com.binzee.foxdevframe.dev.utils.ThreadUtils;
+import com.binzee.foxdevframe.R;
+import com.binzee.foxdevframe.utils.ThreadUtils;
 
 /**
  * 视图工具

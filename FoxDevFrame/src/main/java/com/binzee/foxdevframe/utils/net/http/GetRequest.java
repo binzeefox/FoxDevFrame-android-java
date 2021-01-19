@@ -36,7 +36,7 @@ class GetRequest implements ClientInterface {
             int responseCode = connection.getResponseCode();
             listener.onSuccess(connection, responseCode, connection.getInputStream());
         } catch (Exception e) {
-            LogUtil.e(TAG, "request: 请求失败", e);
+            LogUtil.tag(TAG).message("request: 请求失败").throwable(e).e();
             listener.onError(e);
             connection.disconnect();
         }

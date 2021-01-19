@@ -44,7 +44,7 @@ public class BleUtils implements BleInterface {
 
     private BleUtils() {
         if (!isSupportBle()) throw new RuntimeException("Ble not supported!!");
-        mManager = (BluetoothManager) FoxCore.getApplication()
+        mManager = (BluetoothManager) FoxCore.getApplicationContext()
                 .getSystemService(Context.BLUETOOTH_SERVICE);
         mAdapter = mManager.getAdapter();
     }
@@ -64,7 +64,7 @@ public class BleUtils implements BleInterface {
     @Override
     public void openBle(@Nullable Context context) {
         Intent intent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-        Activity activity = FoxCore.getTopActivity();
+        Activity activity = FoxCore.getSimulatedBackStack().peek();
 
         // 若输入的Context不为空则用该Context
         if (context != null) context.startActivity(intent);
@@ -73,7 +73,7 @@ public class BleUtils implements BleInterface {
         // 若栈顶Activity为空则用Application
         else {
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            FoxCore.getApplication().startActivity(intent);
+            FoxCore.getApplicationContext().startActivity(intent);
         }
     }
 

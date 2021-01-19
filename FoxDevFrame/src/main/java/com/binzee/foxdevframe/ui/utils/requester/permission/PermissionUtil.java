@@ -5,7 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
-import com.binzee.foxdevframe.dev.ui.utils.requester.BaseRequester;
+import com.binzee.foxdevframe.ui.utils.requester.BaseRequester;
 
 import java.util.ArrayList;
 import java.util.Collection;

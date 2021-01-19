@@ -53,7 +53,7 @@ public class UriUtil {
      * @author 狐彻 2020/09/24 11:11
      */
     public OutputStream getOutputStream(Uri uri) throws FileNotFoundException {
-        ContentResolver resolver = FoxCore.getApplication().getContentResolver();
+        ContentResolver resolver = FoxCore.getApplicationContext().getContentResolver();
         return resolver.openOutputStream(uri);
     }
 
@@ -63,7 +63,7 @@ public class UriUtil {
      * @author 狐彻 2020/09/24 11:12
      */
     public InputStream getInputStream(Uri uri) throws FileNotFoundException {
-        ContentResolver resolver = FoxCore.getApplication().getContentResolver();
+        ContentResolver resolver = FoxCore.getApplicationContext().getContentResolver();
         return resolver.openInputStream(uri);
     }
 
@@ -73,11 +73,8 @@ public class UriUtil {
      * @author 狐彻 2020/09/24 10:34
      */
     public String getUriMimeType(Uri uri){
-        LogUtil.v(TAG, "getUriMimeType: uri = " + uri);
-        String type = FoxCore.getApplication()
+        return FoxCore.getApplicationContext()
                 .getContentResolver().getType(uri);
-        LogUtil.v(TAG, "getUriMimeType: type = " + type);
-        return type;
     }
 
     /**
@@ -86,7 +83,7 @@ public class UriUtil {
      * @author 狐彻 2020/09/09 17:06
      */
     public Uri fileToUri(File file, String authority) {
-        return FileProvider.getUriForFile(FoxCore.getApplication(), authority, file);
+        return FileProvider.getUriForFile(FoxCore.getApplicationContext(), authority, file);
     }
 
     /**
@@ -95,7 +92,7 @@ public class UriUtil {
      * @author 狐彻 2020/09/10 9:04
      */
     public Uri imageToContentUri(File imageFile){
-        Cursor cursor = FoxCore.getApplication().getContentResolver()
+        Cursor cursor = FoxCore.getApplicationContext().getContentResolver()
                 .query(
                         MediaStore.Images.Media.EXTERNAL_CONTENT_URI
                         , new String[]{MediaStore.Images.Media._ID}
@@ -114,7 +111,7 @@ public class UriUtil {
             //图片文件存在
             ContentValues values = new ContentValues();
             values.put(MediaStore.Images.Media.DATA, imageFile.getPath());
-            return FoxCore.getApplication().getContentResolver()
+            return FoxCore.getApplicationContext().getContentResolver()
                     .insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
         } else return null; //图片不存在
     }
@@ -154,16 +151,16 @@ public class UriUtil {
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);  //临时权限
         intent.setDataAndType(uri, mimeType);
-        List<ResolveInfo> resolveInfoList = FoxCore.getApplication().getPackageManager()
+        List<ResolveInfo> resolveInfoList = FoxCore.getApplicationContext().getPackageManager()
                 .queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
         for (ResolveInfo info : resolveInfoList){
             String packageName = info.activityInfo.packageName;
-            FoxCore.getApplication().grantUriPermission(packageName, uri
+            FoxCore.getApplicationContext().grantUriPermission(packageName, uri
                     , Intent.FLAG_GRANT_READ_URI_PERMISSION
                             | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
         }
 
-        FoxCore.getApplication().startActivity(intent);
+        FoxCore.getApplicationContext().startActivity(intent);
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -179,7 +176,7 @@ public class UriUtil {
     @RequiresApi(api = Build.VERSION_CODES.O)
     private String convertImageUri(Uri uri) {
         String path = null;
-        Cursor cursor = FoxCore.getApplication()
+        Cursor cursor = FoxCore.getApplicationContext()
                 .getContentResolver()
                 .query(uri, new String[]{MediaStore.Images.ImageColumns.DATA}, null, null);
         if (cursor == null) return null;
@@ -201,13 +198,13 @@ public class UriUtil {
      */
     private String convertContentUri(Uri uri) {
         try {
-            List<PackageInfo> packs = FoxCore.getApplication().getPackageManager()
+            List<PackageInfo> packs = FoxCore.getApplicationContext().getPackageManager()
                     .getInstalledPackages(PackageManager.GET_PROVIDERS);    //获取系统内所有包
             String fileProviderClassName = FileProvider.class.getName();
             for (PackageInfo pack : packs) {
                 ProviderInfo[] providers = pack.providers;  //获取所有Provider
                 if (providers == null) {
-                    LogUtil.e(TAG, "convertContentUri: no provider find");
+                    LogUtil.tag(TAG).message("convertContentUri: no provider find").e();
                     continue;
                 }
                 for (ProviderInfo provider : providers) {
@@ -218,7 +215,7 @@ public class UriUtil {
                         Method getPathStrategy = fileProviderClass.getDeclaredMethod("getPathStrategy", Context.class, String.class);
                         getPathStrategy.setAccessible(true);
                         Object invoke = getPathStrategy
-                                .invoke(null, FoxCore.getApplication(), uri.getAuthority());
+                                .invoke(null, FoxCore.getApplicationContext(), uri.getAuthority());
                         if (invoke != null) {
                             String PathStrategyStringClass = FileProvider.class.getName() + "$PathStrategy";
                             Class<?> PathStrategy = Class.forName(PathStrategyStringClass);
@@ -235,7 +232,7 @@ public class UriUtil {
                 }
             }
         } catch (Exception e) {
-            LogUtil.e(TAG, "convertContentUri: ", e);
+            LogUtil.tag(TAG).message("convertContentUri: ").throwable(e).e();
         }
         return null;
     }

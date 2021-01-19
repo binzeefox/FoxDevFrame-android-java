@@ -5,7 +5,8 @@ import android.content.Context;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
-import com.binzee.foxdevframe.dev.FoxCore;
+import com.binzee.foxdevframe.FoxCore;
+
 
 /**
  * 碎片基类

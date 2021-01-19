@@ -68,7 +68,7 @@ public class ClassUtil {
             field.setAccessible(true);
             return field.get(target);
         } catch (NoSuchFieldException | IllegalAccessException e) {
-            LogUtil.e(TAG, "getFieldValue: 获取字段值失败", e);
+            LogUtil.tag(TAG).message("getFieldValue: 获取字段值失败").throwable(e).e();
             return null;
         }
     }

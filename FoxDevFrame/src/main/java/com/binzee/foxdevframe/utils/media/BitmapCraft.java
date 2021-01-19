@@ -25,7 +25,7 @@ public class BitmapCraft {
     private Bitmap target;
 
     public BitmapCraft(@NonNull Bitmap target) {
-        this(FoxCore.getApplication(), target);
+        this(FoxCore.getApplicationContext(), target);
     }
 
     public BitmapCraft(Context ctx, @NonNull Bitmap target) {

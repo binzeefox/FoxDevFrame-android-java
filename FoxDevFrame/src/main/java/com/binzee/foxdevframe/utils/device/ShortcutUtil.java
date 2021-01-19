@@ -39,7 +39,7 @@ public class ShortcutUtil {
      * @author binze 2019/11/22 12:02
      */
     public static ShortcutUtil get() {
-        return new ShortcutUtil(FoxCore.getApplication());
+        return new ShortcutUtil(FoxCore.getApplicationContext());
     }
 
     /**
@@ -92,7 +92,7 @@ public class ShortcutUtil {
     public boolean addDynamicShortcuts(List<ShortcutInfo> infoList) {
         if (getDynamicShortcuts().size() + infoList.size() > mManager.getMaxShortcutCountPerActivity()) {
             //快捷方式容量满了
-            LogUtil.e(TAG, "setDynamicShortcut: 无法添加快捷方式，已达上限");
+            LogUtil.tag(TAG).message("setDynamicShortcut: 无法添加快捷方式，已达上限").e();
             return false;
         }
         mManager.addDynamicShortcuts(infoList);
@@ -107,7 +107,7 @@ public class ShortcutUtil {
     public boolean setDynamicShortcuts(List<ShortcutInfo> infoList) {
         if (getDynamicShortcuts().size() + infoList.size() > mManager.getMaxShortcutCountPerActivity()) {
             //快捷方式容量满了
-            LogUtil.e(TAG, "setDynamicShortcut: 无法添加快捷方式，已达上限");
+            LogUtil.tag(TAG).message("setDynamicShortcut: 无法添加快捷方式，已达上限").e();
             return false;
         }
         mManager.setDynamicShortcuts(infoList);

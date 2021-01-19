@@ -16,7 +16,7 @@ import androidx.annotation.RequiresApi;
 import androidx.fragment.app.FragmentManager;
 
 import com.binzee.foxdevframe.FoxCore;
-import com.binzee.foxdevframe.ui.tools.requests.ActivityRequester;
+import com.binzee.foxdevframe.ui.utils.requester.activities.ActivityRequester;
 import com.binzee.foxdevframe.utils.ThreadUtils;
 
 import java.util.ArrayList;
@@ -56,7 +56,7 @@ public class ScopedStorageUtil {
      * @author 狐彻 2020/09/08 13:44
      */
     private ScopedStorageUtil() {
-        mResolver = FoxCore.getApplication().getContentResolver();
+        mResolver = FoxCore.getApplicationContext().getContentResolver();
     }
 
     /**
@@ -107,7 +107,7 @@ public class ScopedStorageUtil {
      * @author 狐彻 2020/09/10 9:35
      */
     public void delete(Uri fileUri) {
-        FoxCore.getApplication().getContentResolver()
+        FoxCore.getApplicationContext().getContentResolver()
                 .delete(fileUri, null, null);
     }
 
@@ -138,7 +138,7 @@ public class ScopedStorageUtil {
                 intent.addCategory(Intent.CATEGORY_OPENABLE);
                 intent.setType("*/*");
 
-                ActivityRequester.get(manager)
+                new ActivityRequester(manager)
                         .request(intent, 0x00f0f, (requestCode, resultCode, resultData) -> {
                             synchronized (lock) {
                                 if (resultCode == Activity.RESULT_OK && resultData != null) {

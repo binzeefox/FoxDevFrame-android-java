@@ -19,7 +19,7 @@ public class USBUtil {
     private final UsbManager mManager;
 
     private USBUtil() {
-        mManager = (UsbManager) FoxCore.getApplication()
+        mManager = (UsbManager) FoxCore.getApplicationContext()
                 .getSystemService(Context.USB_SERVICE);
     }
 

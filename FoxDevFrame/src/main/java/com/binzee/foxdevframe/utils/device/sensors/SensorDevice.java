@@ -42,7 +42,7 @@ public class SensorDevice {
     SensorDevice(Sensor sensor, int delay) {
         mSensor = sensor;
         mDelay = delay;
-        mManager = (SensorManager) FoxCore.getApplication()
+        mManager = (SensorManager) FoxCore.getApplicationContext()
                 .getSystemService(Context.SENSOR_SERVICE);
     }
 
