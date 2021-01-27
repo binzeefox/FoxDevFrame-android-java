@@ -16,7 +16,7 @@ import java.util.Locale;
  */
 public final class FoxConfigs {
     private static final String CONFIG_FILE_NAME = "FOX_CONFIG";
-    private static final String KEY_LANGUAGE_TAG = "FOX_CONFIG";
+    private static final String KEY_LANGUAGE_TAG = "KEY_LANGUAGE_TAG";
 
     FoxConfigs() {
 

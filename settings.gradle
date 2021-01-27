@@ -1,3 +1,4 @@
+include ':FoxDevFrame-Kotlin'
 include ':dev'
 include ':FoxDevFrame'
 include ':app'

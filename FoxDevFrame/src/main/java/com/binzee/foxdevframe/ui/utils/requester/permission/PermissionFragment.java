@@ -79,7 +79,7 @@ public class PermissionFragment extends Fragment {
 
         if (!failedList.isEmpty())
             log.message("startCheckAndRequest: 权限未通过 => " + failedList).v();
-        if (!failedList.isEmpty())
+        if (!noAskList.isEmpty())
             log.message("startCheckAndRequest: 权限不再询问 => " + noAskList).v();
 
         if (listener != null) listener.onResult(requestCode, failedList, noAskList);

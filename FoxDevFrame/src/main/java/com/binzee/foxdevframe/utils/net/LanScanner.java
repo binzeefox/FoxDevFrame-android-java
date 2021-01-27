@@ -39,7 +39,10 @@ public class LanScanner {
         int i = 1;
         while (i <= 255 && !recycled) {
             String ip = addressPre + "." + i;
-            if (TextUtils.equals(myAddress, ip)) continue;
+            if (TextUtils.equals(myAddress, ip)) {
+                i++;
+                continue;
+            }
             pingIp(ip, listener);
             i++;
         }

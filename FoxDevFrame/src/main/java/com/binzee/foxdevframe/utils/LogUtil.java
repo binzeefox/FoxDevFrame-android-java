@@ -32,8 +32,7 @@ public class LogUtil {
 
     private final ExecutorService logExecutor = Executors.newSingleThreadExecutor();
 
-    private static FoxLog firstLog = null;
-    private static FoxLog lastLog = null;
+    private static FoxLog lastLog = null;   // 单链表倒序
 
     // 非静态全局变量 START
     @NonNull
@@ -126,11 +125,11 @@ public class LogUtil {
      */
     public static String getLogRecordText() {
         synchronized (LogUtil.class) {
-            FoxLog log = firstLog;
+            FoxLog log = lastLog;
             StringBuilder sb = new StringBuilder();
             while (log != null) {
                 sb.append(log.toString());
-                log = log.next;
+                log = log.preview;
             }
             return sb.toString();
         }
@@ -215,16 +214,9 @@ public class LogUtil {
         logExecutor.execute(() -> {
             synchronized (LogUtil.class) {
                 FoxLog log = new FoxLog(level, tag, message, t);
-                if (firstLog == null) {
-                    firstLog = log;
-                    return;
+                if (lastLog != null) {
+                    log.preview = lastLog;
                 }
-                if (lastLog == null) {
-                    firstLog.next = log;
-                    lastLog = log;
-                    return;
-                }
-                lastLog.next = log;
                 lastLog = log;
             }
         });
@@ -246,7 +238,7 @@ public class LogUtil {
         final String msg;
         final Throwable e;
 
-        FoxLog next;
+        FoxLog preview;
 
         FoxLog(String level, String tag, String msg, Throwable e) {
             this.level = level;

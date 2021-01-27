@@ -34,7 +34,9 @@ class GetRequest implements ClientInterface {
             listener.onStart(connection);
             connection.connect();
             int responseCode = connection.getResponseCode();
-            listener.onSuccess(connection, responseCode, connection.getInputStream());
+            if (responseCode == 200)
+                listener.onSuccess(connection, responseCode, connection.getInputStream());
+            else listener.onSuccess(connection, responseCode, null);
         } catch (Exception e) {
             LogUtil.tag(TAG).message("request: 请求失败").throwable(e).e();
             listener.onError(e);

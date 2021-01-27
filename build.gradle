@@ -3,13 +3,17 @@ apply plugin: 'com.github.dcendents.android-maven'
 apply plugin:'maven'
 
 buildscript {
+    ext {
+        kotlin_version = '1.4.21'
+    }
     repositories {
         google()
         jcenter()
     }
     dependencies {
         classpath "com.android.tools.build:gradle:4.1.1"
-        classpath 'com.github.dcendents:android-maven-gradle-plugin:2.1'  //注意版本号保持为最新版本
+        classpath 'com.github.dcendents:android-maven-gradle-plugin:2.1'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version" //注意版本号保持为最新版本
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files

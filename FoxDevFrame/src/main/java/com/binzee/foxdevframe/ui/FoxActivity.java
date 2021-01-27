@@ -30,6 +30,7 @@ public abstract class FoxActivity extends AppCompatActivity implements UiInterfa
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         initContentView();
+        onCreate();
     }
 
 
@@ -37,6 +38,7 @@ public abstract class FoxActivity extends AppCompatActivity implements UiInterfa
     public void onCreate(@Nullable Bundle savedInstanceState, @Nullable PersistableBundle persistentState) {
         super.onCreate(savedInstanceState, persistentState);
         initContentView();
+        onCreate();
     }
 
     @Override

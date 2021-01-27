@@ -12,6 +12,7 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/FoxDevFrame" />
+            <option value="$PROJECT_DIR$/FoxDevFrame-Kotlin" />
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/dev" />
           </set>

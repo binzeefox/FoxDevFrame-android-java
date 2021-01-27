@@ -153,14 +153,10 @@ public class FoxCore {
         }
     }
 
-    ///////////////////////////////////////////////////////////////////////////
-    // 私有方法
-    ///////////////////////////////////////////////////////////////////////////
-
     /**
      * 设置语言
      */
-    private void setLocale(@NonNull Locale locale, boolean localize) {
+    public void setLocale(@NonNull Locale locale, boolean localize) {
         Resources r = FoxCore.getResources();
         DisplayMetrics m = r.getDisplayMetrics();
         Configuration c = r.getConfiguration();
@@ -169,6 +165,10 @@ public class FoxCore {
         r.updateConfiguration(c, m);
         if (localize) configs.writeLanguageTag(locale.toLanguageTag());
     }
+
+    ///////////////////////////////////////////////////////////////////////////
+    // 私有方法
+    ///////////////////////////////////////////////////////////////////////////
 
     /**
      * 注册Activity回调
