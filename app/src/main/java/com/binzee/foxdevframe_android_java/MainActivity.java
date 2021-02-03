@@ -8,17 +8,10 @@ import android.util.Log;
 import com.binzee.foxdevframe.ui.FoxActivity;
 import com.binzee.foxdevframe.ui.utils.NoticeUtil;
 import com.binzee.foxdevframe.ui.utils.launcher.Launcher;
+import com.binzee.foxdevframe.ui.utils.requester.permission.PermissionUtil;
 import com.binzee.foxdevframe.utils.LogUtil;
 import com.binzee.foxdevframe.utils.ThreadUtils;
 import com.binzee.foxdevframe.utils.device.resource.ScopedStorageUtil;
-import com.binzee.foxdevframe.utils.net.http.ClientInterface;
-import com.binzee.foxdevframe.utils.net.http.ClientUtil;
-import com.binzee.foxdevframe.utils.permission.PermissionUtil;
-import com.binzee.foxdevframe.utils.device.DeviceStatusUtil;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
 import java.util.concurrent.ExecutionException;
 
 public class MainActivity extends FoxActivity {
@@ -56,7 +49,7 @@ public class MainActivity extends FoxActivity {
 
 
     private void permissionTest() {
-        PermissionUtil.with(this)
+        new PermissionUtil(this)
                 .addPermission(Manifest.permission.CAMERA)
                 .addPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 .addPermission(Manifest.permission.READ_EXTERNAL_STORAGE)

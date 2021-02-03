@@ -188,20 +188,20 @@ public class ServerHelper {
         }
     }
 
+    ///////////////////////////////////////////////////////////////////////////
+    // 私有方法
+    ///////////////////////////////////////////////////////////////////////////
+
     /**
      * 信息获取回调
      */
-    public void onMessageReceive(Socket socket, String text) {
+    private void onMessageReceive(Socket socket, String text) {
         synchronized (mInstanceLock) {
             Log.d(TAG, "onMessageReceive: ip = " + socket.getRemoteSocketAddress().toString());
             Log.d(TAG, "onMessageReceive: text = " + text);
             if (mCallback != null) mCallback.onReceive(socket, text);
         }
     }
-
-    ///////////////////////////////////////////////////////////////////////////
-    // 私有方法
-    ///////////////////////////////////////////////////////////////////////////
 
     /**
      * 发送心跳

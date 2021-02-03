@@ -21,9 +21,9 @@ public class SensorActivity extends FoxActivity {
     private final SensorListener.AccelerometerListener listener = new SensorListener.AccelerometerListener() {
         @Override
         public void onValueChanged(float x, float y, float z) {
-            LogUtil.d(TAG, "onValueChanged: x " + x);
-            LogUtil.d(TAG, "onValueChanged: y " + y);
-            LogUtil.d(TAG, "onValueChanged: z " + z);
+//            LogUtil.d(TAG, "onValueChanged: x " + x);
+//            LogUtil.d(TAG, "onValueChanged: y " + y);
+//            LogUtil.d(TAG, "onValueChanged: z " + z);
         }
     };
 

@@ -70,7 +70,7 @@ class FoxBleScanner implements BleScanner {
         );
         adapter.getBluetoothLeScanner().startScan(filterList, scanSettings, callback);
         if (timeout < 0) timeout = 0;
-        if (timeout != -1) new Handler().postDelayed(this::stopScan, timeout);
+        new Handler().postDelayed(this::stopScan, timeout);
     }
 
     @Override

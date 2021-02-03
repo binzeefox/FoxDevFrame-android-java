@@ -83,10 +83,10 @@ public class SystemCameraRequester {
             if (resultCode == Activity.RESULT_CANCELED)
                 callback.onError(new RequestCancelException());
             else if (resultData == null)
-                callback.onResult(requestCode, null, null);
+                callback.onResult(requestCode1, null, null);
             else {
                 Uri uri = resultData.getData();
-                callback.onResult(requestCode, resultData, uri);
+                callback.onResult(requestCode1, resultData, uri);
             }
         };
     }

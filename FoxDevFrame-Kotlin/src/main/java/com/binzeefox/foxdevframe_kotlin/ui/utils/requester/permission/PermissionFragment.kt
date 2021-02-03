@@ -15,7 +15,7 @@ import com.binzeefox.foxdevframe_kotlin.utils.LogUtil
  */
 class PermissionFragment: Fragment() {
     private val logger: LogUtil = LogUtil("PermissionFragment")
-    @Volatile var listener: PermissionInterface.OnPermissionResultListener? = null
+    @Volatile internal var listener: PermissionInterface.OnPermissionResultListener? = null
 
     /**
      * 检查权限
@@ -53,7 +53,7 @@ class PermissionFragment: Fragment() {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         val failedList = ArrayList<String>()
         val noAskList = ArrayList<String>()
-        for (i in 0 .. grantResults.size) {
+        for (i in grantResults.indices) {
             if (grantResults[i] != PERMISSION_GRANTED) {
                 failedList.add(permissions[i])
                 if (checkNoAsk(permissions[i]))
