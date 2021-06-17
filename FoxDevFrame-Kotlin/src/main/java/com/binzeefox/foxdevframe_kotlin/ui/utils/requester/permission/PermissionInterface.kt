@@ -11,7 +11,7 @@ interface PermissionInterface {
     /**
      * 权限请求回调
      */
-    fun interface OnPermissionResultListener {
+    interface OnPermissionResultListener {
 
         /**
          * 权限获取回调

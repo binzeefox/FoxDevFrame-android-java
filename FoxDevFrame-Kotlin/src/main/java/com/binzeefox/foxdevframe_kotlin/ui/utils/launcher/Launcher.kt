@@ -85,7 +85,7 @@ interface ILauncherTarget {
     /**
      * 拦截器
      */
-    fun interface IntentInterceptor {
+    interface IntentInterceptor {
         /**
          * 拦截回调，返回的Intent将用于跳转
          *

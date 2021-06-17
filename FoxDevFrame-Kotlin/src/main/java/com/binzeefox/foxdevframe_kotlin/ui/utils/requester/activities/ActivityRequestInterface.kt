@@ -11,7 +11,7 @@ import android.os.Bundle
  */
 interface ActivityRequestInterface {
 
-    fun interface OnActivityResultCallback {
+    interface OnActivityResultCallback {
 
         /**
          * 回调

@@ -25,6 +25,10 @@ object ThreadUtils {
         else Handler(Looper.getMainLooper()).post(action)
     }
 
+    fun runOnUiThread(action: () -> Unit) {
+        runOnUiThread(Runnable { action.invoke() })
+    }
+
     /**
      * IO线程运行
      */

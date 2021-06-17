@@ -61,13 +61,15 @@ class SystemCameraRequester(private val requester: ActivityRequester) {
      * @author 狐彻 2020/10/30 17:24
      */
     private fun createCallback(requestCode: Int, callback: OnSystemCameraResultCallback): ActivityRequestInterface.OnActivityResultCallback {
-        return ActivityRequestInterface.OnActivityResultCallback { requestCode1: Int, resultCode: Int, resultData: Intent? ->
-            when {
-                resultCode == Activity.RESULT_CANCELED -> callback.onError(RequestCancelException())
-                resultData == null -> callback.onResult(requestCode1, null, null)
-                else -> {
-                    val uri = resultData.data
-                    callback.onResult(requestCode1, resultData, uri)
+        return object: ActivityRequestInterface.OnActivityResultCallback {
+            override fun onResult(requestCode: Int, resultCode: Int, resultData: Intent?) {
+                when {
+                    resultCode == Activity.RESULT_CANCELED -> callback.onError(RequestCancelException())
+                    resultData == null -> callback.onResult(requestCode, null, null)
+                    else -> {
+                        val uri = resultData.data
+                        callback.onResult(requestCode, resultData, uri)
+                    }
                 }
             }
         }
